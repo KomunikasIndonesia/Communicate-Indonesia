@@ -15,8 +15,10 @@ This project is currently configured for linux
 ### Manual Setup
 1. extract google appengine sdk into tmp/google_appengine
 2. sudo pip install virtualenv
-2. make install
+3. make install
 
 ## Common development tasks
 - make install : install run + test dependencies
 - make server : run appengine dev app server
+- make test : run tests
+- make flake8 : lint source code
