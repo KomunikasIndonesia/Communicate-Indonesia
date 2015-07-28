@@ -3,7 +3,7 @@ GAE_URL = https://storage.googleapis.com/appengine-sdks/featured/$(GAE_ZIP)
 GAE_SERVER = tmp/google_appengine/dev_appserver.py
 
 clean:
-	rm -r lib/ venv/
+	rm -rf lib/ venv/
 
 venv:
 	virtualenv venv
@@ -11,9 +11,11 @@ venv:
 git-hooks:
 	cp git_hooks/* .git/hooks/
 
-install: git-hooks venv
+install: clean git-hooks venv
 	pip install -r requirements.txt -t lib/ --ignore-installed; \
-	. venv/bin/activate; pip install flake8
+	. venv/bin/activate; \
+	pip install flake8; \
+	pip install nose; pip install nosegae;\
 
 create-tmp:
 	mkdir -p tmp
@@ -31,6 +33,7 @@ server:
 	python $(GAE_SERVER) .
 
 test:
+	. venv/bin/activate; \
 	nosetests tests --with-gae --gae-lib-root=tmp/google_appengine
 
 flake8:
