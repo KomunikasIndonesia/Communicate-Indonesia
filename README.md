@@ -9,12 +9,12 @@ Google Appengine python SDK version 1.9.24
 Python version 2.7x
 
 ### Default Setup
-1. make gae-install
-2. make venv-install
+1. make tool-install
 2. make install
 
 ### Manual Setup
 1. extract google appengine sdk into tmp/google_appengine
+2. sudo pip install virtualenv
 2. make install
 
 ## Common development tasks

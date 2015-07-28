@@ -8,7 +8,10 @@ clean:
 venv:
 	virtualenv venv
 
-install: venv
+git-hooks:
+	cp git_hooks/* .git/hooks/
+
+install: git-hooks venv
 	pip install -r requirements.txt -t lib/ --ignore-installed; \
 	. venv/bin/activate; pip install flake8
 
