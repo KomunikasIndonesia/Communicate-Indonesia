@@ -5,8 +5,8 @@ This project attempts to connect farmers in Indonesia through sms allowing them 
 This project is currently configured for linux
 
 ### Requirements
-Google Appengine python SDK version 1.9.24
-Python version 2.7x
+- Google Appengine python SDK version 1.9.24
+- Python version 2.7x
 
 ### Default Setup
 1. make tool-install
