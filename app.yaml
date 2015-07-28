@@ -6,3 +6,6 @@ threadsafe : true
 
 handlers:
 
+- url : /v1/sms/.*
+  script : app.api.sms.app
+  secure : always
