@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import time
 
 app = Flask(__name__)
@@ -21,8 +21,8 @@ USERS = [{
     'phone_number': '1234567',
     'first_name': 'Thomas',
     'last_name': None,
-    'ts_created' : 1438141613370,
-    'ts_updated' : 1438141613370
+    'ts_created': 1438141613370,
+    'ts_updated': 1438141613370
 },
 {
     'id': 'ci2',
@@ -30,8 +30,8 @@ USERS = [{
     'phone_number': '531531',
     'first_name': 'Siti',
     'last_name': 'Nurbaya',
-    'ts_created' : 1438141741970,
-    'ts_updated' : 1438141741970
+    'ts_created': 1438141741970,
+    'ts_updated': 1438141741970
 },
 {
     'id': 'ci3',
@@ -39,8 +39,8 @@ USERS = [{
     'phone_number': '23452345',
     'first_name': 'Ratna',
     'last_name': 'Fadilah',
-    'ts_created' : 1438141750730,
-    'ts_updated' : 1438141750730
+    'ts_created': 1438141750730,
+    'ts_updated': 1438141750730
 }]
 
 
@@ -54,10 +54,11 @@ def insert():
     }
 
     # Store data
-    # insert_funct()
+    # insert_funct(data)
     msg = 'Successful PUT request'
 
-    return jsonify({'code':201, 'response':msg})
+    return jsonify({'code': 201, 'response': msg})
+
 
 @app.route('v1/users/<userid>', methods=['GET'])
 def retrieve(userid):
@@ -70,4 +71,4 @@ def retrieve(userid):
         if userid in user['id']:
             response = user
 
-    return jsonify({'response':response})
+    return jsonify({'response': response})
