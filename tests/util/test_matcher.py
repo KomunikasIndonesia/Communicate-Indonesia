@@ -1,5 +1,5 @@
 import unittest
-from app.api.matcher import match
+from app.util.matcher import match
 
 
 class MatchTest(unittest.TestCase):
