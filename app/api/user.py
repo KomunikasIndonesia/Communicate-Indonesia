@@ -29,7 +29,7 @@ def insert():
         if 'last_name' in req:
             new.last_name = req['last_name']
 
-        new_key = new.put()
+        new.put()
 
         msg = 'Successful PUT request'
 
