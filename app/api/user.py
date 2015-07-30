@@ -23,10 +23,10 @@ def insert():
         req = request.get_json(force=True)
 
         new = User()
-        new = User(id = req['phone_number'],
-                   role = req['role'],
-                   phone_number = req['phone_number'],
-                   first_name = req['first_name'])
+        new = User(id=req['phone_number'],
+                   role=req['role'],
+                   phone_number=req['phone_number'],
+                   first_name=req['first_name'])
 
         if 'last_name' in req:
             new.last_name = req['last_name']
