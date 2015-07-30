@@ -48,7 +48,7 @@ def retrieve(userid):
         data = user_key.get()
 
         resp['result'] = {
-            'id': data.key.id(),
+            'id': str(data.key.id()),
             'role': data.role,
             'phone_number': data.phone_number,
             'first_name': data.first_name,
