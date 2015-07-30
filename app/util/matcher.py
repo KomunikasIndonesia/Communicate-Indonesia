@@ -1,6 +1,6 @@
 import editdistance as ed
 
-LIMIT = 5
+LIMIT = 2
 
 
 def match(usrinput, target, limit=None):
