@@ -8,7 +8,6 @@ ROLES = ['hutan_biru', 'farmer']
 
 
 class User(ndb.Model):
-    id = ndb.StringProperty(required=True)
     role = ndb.StringProperty(required=True, choices=set(ROLES))
     phone_number = ndb.StringProperty(required=True)
     first_name = ndb.StringProperty(required=True)
@@ -23,16 +22,14 @@ def insert():
         req = request.get_json(force=True)
 
         new = User()
-        new = User(id=req['phone_number'],
-                   role=req['role'],
+        new = User(role=req['role'],
                    phone_number=req['phone_number'],
                    first_name=req['first_name'])
 
         if 'last_name' in req:
             new.last_name = req['last_name']
 
-        new.key = ndb.Key(User, req['phone_number'])
-        new.put()
+        new_key = new.put()
 
         msg = 'Successful PUT request'
 
@@ -47,11 +44,11 @@ def retrieve(userid):
     resp = {'result': {}}
 
     try:
-        user_key = ndb.Key(User, userid)
+        user_key = ndb.Key('User', int(userid))
         data = user_key.get()
 
         resp['result'] = {
-            'id': data.id,
+            'id': data.key.id(),
             'role': data.role,
             'phone_number': data.phone_number,
             'first_name': data.first_name,
