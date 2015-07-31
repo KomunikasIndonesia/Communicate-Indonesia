@@ -1,23 +1,15 @@
 from flask import Flask, jsonify, request
 from google.appengine.ext import ndb
+from app.model.user import User
 import time
 
 app = Flask(__name__)
 
-ROLES = ['hutan_biru', 'farmer']
-
-
-class User(ndb.Model):
-    role = ndb.StringProperty(required=True, choices=set(ROLES))
-    phone_number = ndb.StringProperty(required=True)
-    first_name = ndb.StringProperty(required=True)
-    last_name = ndb.StringProperty()
-    ts_created = ndb.DateTimeProperty(auto_now_add=True)
-    ts_updated = ndb.DateTimeProperty(auto_now=True)
-
 
 @app.route('/v1/users', methods=['PUT'])
 def insert():
+    resp = {}
+
     try:
         req = request.get_json(force=True)
 
@@ -31,23 +23,24 @@ def insert():
 
         new.put()
 
-        msg = 'Successful PUT request'
+        resp['status'] = 'success'
 
-    except Exception:
-        msg = 'Bad PUT request'
+    except Exception, e:
+        resp['status'] = 'error'
+        resp['message'] = str(e)
 
-    return jsonify({'response': msg})
+    return jsonify(**resp)
 
 
 @app.route('/v1/users/<userid>', methods=['GET'])
 def retrieve(userid):
-    resp = {'result': {}}
+    resp = {}
 
     try:
         user_key = ndb.Key('User', int(userid))
         data = user_key.get()
 
-        resp['result'] = {
+        resp['data'] = {
             'id': str(data.key.id()),
             'role': data.role,
             'phone_number': data.phone_number,
@@ -57,7 +50,11 @@ def retrieve(userid):
             'ts_updated': time.mktime(data.ts_updated.timetuple()) * 1000
         }                                           # Timestamp in epoch milis
 
-    except Exception:
-        resp['result'] = None
+        resp['status'] = 'success'
+
+    except Exception, e:
+        resp['data'] = None
+        resp['success'] = 'error'
+        resp['message'] = str(e)
 
     return jsonify(**resp)
