@@ -13,12 +13,12 @@ class User(ndb.Model):
     ts_updated = ndb.DateTimeProperty(auto_now=True)
 
     def toJson(self):
-    	return {
-    		'id': self.key.id(),
-    		'role': self.role,
-    		'phone_number': self.phone_number,
-    		'first_name': self.first_name,
-    		'last_name': self.last_name,
-    		'ts_created': int(time.mktime(self.ts_created.timetuple()) * 1000),
-    		'ts_updated': int(time.mktime(self.ts_updated.timetuple()) * 1000),
-    	}
+        return {
+            'id': self.key.id(),
+            'role': self.role,
+            'phone_number': self.phone_number,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'ts_created': int(time.mktime(self.ts_created.timetuple()) * 1000),
+            'ts_updated': int(time.mktime(self.ts_updated.timetuple()) * 1000),
+        }

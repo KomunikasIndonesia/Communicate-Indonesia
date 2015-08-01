@@ -32,8 +32,8 @@ class UserTest(unittest.TestCase):
         test_user.put()
         self.assertEqual(1, len(User.query().fetch(2)))
 
-    def test_insert_entity_without_params(self):
-        test_user = User()
+    # def test_insert_entity_without_params(self):
+    #     test_user = User()
 
         # try:
         #     test_user.put()

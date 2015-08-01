@@ -17,7 +17,7 @@ for error in range(400, 420) + range(500, 506):
 
 def validate(req):
     if not req:
-        abort(400, { 'error': 'missing request data' })
+        abort(400, {'error': 'missing request data'})
 
     props = User._properties
     keys = props.keys()
@@ -38,10 +38,8 @@ def validate(req):
 
 @app.route('/v1/users', methods=['PUT'])
 def insert():
-    resp = {}
-
     req = request.get_json(force=True)
-    validate_insert(req)
+    validate(req)
 
     new = User(role=req['role'],
                phone_number=req['phone_number'],
@@ -55,6 +53,7 @@ def insert():
     new.put()
     return jsonify(new.toJson())
 
+
 def get_user(userid):
     if not userid:
         abort(400, {'error': 'userid is required'})
@@ -65,6 +64,7 @@ def get_user(userid):
         abort(400, {'error': 'user not found'})
 
     return user
+
 
 @app.route('/v1/users/<userid>', methods=['GET'])
 def retrieve(userid):
