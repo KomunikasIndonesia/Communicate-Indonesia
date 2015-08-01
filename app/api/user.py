@@ -55,7 +55,7 @@ def insert():
 
 
 def get_user(userid):
-    if not userid:
+    if not userid or userid == '':
         abort(400, {'error': 'userid is required'})
 
     userid = int(userid)

@@ -14,7 +14,7 @@ class User(ndb.Model):
 
     def toJson(self):
         return {
-            'id': self.key.id(),
+            'id': str(self.key.id()),
             'role': self.role,
             'phone_number': self.phone_number,
             'first_name': self.first_name,
