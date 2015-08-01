@@ -3,6 +3,7 @@ from app.api.user import app
 from app.model.user import User
 from google.appengine.ext import ndb, testbed
 import json
+import time
 
 
 class UserTest(unittest.TestCase):
@@ -34,6 +35,9 @@ class UserTest(unittest.TestCase):
 
     def retrieve(self, userid):
         return self.app.get('/v1/users/{0}'.format(userid))
+
+    def fetch(self, **kwargs):
+        return self.app.get('/v1/users', query_string=kwargs)
 
     def test_insert_user(self):
         res = self.insert(role='farmer', phone_number='1234567',
@@ -167,6 +171,64 @@ class UserTest(unittest.TestCase):
         res = json.loads(get.data)
 
         self.assertEqual('user not found', res['error'])
+
+    def test_fetch_empty_db(self):
+        fetch = self.fetch()
+        res = json.loads(fetch.data)
+
+        self.assertEqual(0, len(res['users']))
+
+    def test_fetch_with_phone_number(self):
+        self.insert(role='farmer', phone_number='123',
+                    first_name='Erika')
+        self.insert(role='hutan_biru', phone_number='321',
+                    first_name='Kat')
+
+        fetch = self.fetch(phone_number='123')
+        res = json.loads(fetch.data)
+
+        r = res['users']
+
+        self.assertEqual(1, len(r))
+        self.assertEqual('123', r[0]['phone_number'])
+        self.assertEqual('Erika', r[0]['first_name'])
+        self.assertEqual('farmer', r[0]['role'])
+
+    def test_fetch_without_phone_number(self):
+        self.insert(role='hutan_biru', phone_number='321',
+                    first_name='Kat')
+        self.insert(role='farmer', phone_number='123',
+                    first_name='Erika')
+
+        fetch = self.fetch()
+        res = json.loads(fetch.data)
+
+        r = res['users']
+
+        self.assertEqual(2, len(r))
+
+    def test_fetch_sorted_from_recently_created(self):
+        self.insert(role='hutan_biru', phone_number='321',
+                    first_name='Kat')
+        time.sleep(1)
+
+        self.insert(role='farmer', phone_number='123',
+                    first_name='Erika')
+        time.sleep(1)
+
+        self.insert(role='hutan_biru', phone_number='531',
+                    first_name='Ratna')
+        time.sleep(1)
+
+        fetch = self.fetch()
+        res = json.loads(fetch.data)
+
+        r = res['users']
+
+        self.assertEqual(3, len(r))
+        self.assertGreater(r[0]['ts_created'], r[1]['ts_created'])
+        self.assertGreater(r[1]['ts_created'], r[2]['ts_created'])
+        self.assertGreater(r[0]['ts_created'], r[2]['ts_created'])
 
 
 if __name__ == '__main__':
