@@ -54,6 +54,22 @@ def insert():
     return jsonify(new.toJson())
 
 
+@app.route('/v1/users', methods=['GET'])
+def fetch():
+    phone = request.args.get('phone_number')
+
+    if not phone:
+        users = User.query().order(-User.ts_created).fetch()
+    else:
+        users = User.query(User.phone_number == phone).order(-User.ts_created)
+
+    res = {
+        'users': [u.toJson() for u in users] if users else []
+    }
+
+    return jsonify(res)
+
+
 def get_user(userid):
     if not userid or userid == '':
         abort(400, {'error': 'userid is required'})
