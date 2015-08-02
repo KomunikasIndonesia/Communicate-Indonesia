@@ -9,3 +9,11 @@ handlers:
 - url : /v1/sms/.*
   script : app.api.sms.app
   secure : always
+
+- url : /v1/users/.*
+  script : app.api.user.app
+  secure : always
+
+- url : /v1/users
+  script : app.api.user.app
+  secure : always
