@@ -3,7 +3,6 @@ from app.api.user import app
 from app.model.user import User
 from google.appengine.ext import ndb, testbed
 import json
-import time
 
 
 class UserTest(unittest.TestCase):
@@ -21,20 +20,11 @@ class UserTest(unittest.TestCase):
     def tearDown(self):
         self.testbed.deactivate()
 
-    def test_empty_db(self):
-        self.assertEqual(0, len(User.query().fetch()))
-
-    def test_insert_entity(self):
-        test_user = User(role='farmer', phone_number='1234567',
-                         first_name='Kat', last_name='Leigh')
-        test_user.put()
-        self.assertEqual(1, len(User.query().fetch()))
-
     def insert(self, **kwargs):
-        return self.app.put('/v1/users', data=json.dumps(kwargs))
+        return self.app.post('/v1/users', data=kwargs)
 
-    def retrieve(self, userid):
-        return self.app.get('/v1/users/{0}'.format(userid))
+    def retrieve(self, user_id):
+        return self.app.get('/v1/users/{0}'.format(user_id))
 
     def fetch(self, **kwargs):
         return self.app.get('/v1/users', query_string=kwargs)
@@ -58,22 +48,19 @@ class UserTest(unittest.TestCase):
 
         data = json.loads(res.data)
 
+        self.assertEqual('hutan_biru', data['role'])
+        self.assertEqual('1234567', data['phone_number'])
+        self.assertEqual('Kat', data['first_name'])
         self.assertEqual(None, data['last_name'])
+
         self.assertEqual(1, len(User.query().fetch()))
-
-    def test_insert_empty(self):
-        res = self.insert()
-
-        data = json.loads(res.data)
-
-        self.assertEqual('missing request data', data['error'])
-        self.assertEqual(0, len(User.query().fetch()))
 
     def test_insert_without_role(self):
         res = self.insert(phone_number='1234567', first_name='Kat')
 
         data = json.loads(res.data)
 
+        self.assertEqual(400, res.status_code)
         self.assertEqual('role is required', data['error'])
         self.assertEqual(0, len(User.query().fetch()))
 
@@ -82,6 +69,7 @@ class UserTest(unittest.TestCase):
 
         data = json.loads(res.data)
 
+        self.assertEqual(400, res.status_code)
         self.assertEqual('phone_number is required', data['error'])
         self.assertEqual(0, len(User.query().fetch()))
 
@@ -90,6 +78,7 @@ class UserTest(unittest.TestCase):
 
         data = json.loads(res.data)
 
+        self.assertEqual(400, res.status_code)
         self.assertEqual('first_name is required', data['error'])
         self.assertEqual(0, len(User.query().fetch()))
 
@@ -99,8 +88,8 @@ class UserTest(unittest.TestCase):
 
         data = json.loads(res.data)
 
-        self.assertTrue('invalid role' in data['error'])
-        self.assertTrue('should be: hutan_biru or farmer' in data['error'])
+        self.assertEqual(400, res.status_code)
+        self.assertTrue('teacher is an invalid role' in data['error'])
         self.assertEqual(0, len(User.query().fetch()))
 
     def test_with_different_roles(self):
@@ -111,22 +100,6 @@ class UserTest(unittest.TestCase):
                     first_name='Kat', last_name='Leigh')
 
         self.assertEqual(2, len(User.query().fetch()))
-
-    def test_insert_with_non_strings(self):
-        res = self.insert(role='hutan_biru', phone_number=321,
-                          first_name='Kat')
-
-        data = json.loads(res.data)
-
-        self.assertEqual('phone_number is not string', data['error'])
-
-        res = self.insert(role='hutan_biru', phone_number='321',
-                          first_name=123)
-
-        data = json.loads(res.data)
-
-        self.assertEqual('first_name is not string', data['error'])
-        self.assertEqual(0, len(User.query().fetch()))
 
     def test_insert_and_retrieve(self):
         req = self.insert(role='hutan_biru', phone_number='321',
@@ -147,7 +120,7 @@ class UserTest(unittest.TestCase):
 
         self.assertEqual(1, len(User.query().fetch()))
 
-    def test_insert_and_retrieve_wihtout_last_name(self):
+    def test_insert_and_retrieve_without_last_name(self):
         req = self.insert(role='hutan_biru', phone_number='321',
                           first_name='Kat')
 
@@ -160,23 +133,26 @@ class UserTest(unittest.TestCase):
         self.assertEqual(data['role'], res['role'])
         self.assertEqual(data['phone_number'], res['phone_number'])
         self.assertEqual(data['first_name'], res['first_name'])
-        self.assertEqual(data['last_name'], res['last_name'])
+        self.assertEqual(None, res['last_name'])
+        self.assertEqual(None, data['last_name'])
         self.assertEqual(data['ts_created'], res['ts_created'])
         self.assertEqual(data['ts_updated'], res['ts_updated'])
 
         self.assertEqual(1, len(User.query().fetch()))
 
     def test_retrieve_empty_db(self):
-        get = self.retrieve('123')
-        res = json.loads(get.data)
+        res = self.retrieve('123')
+        data = json.loads(res.data)
 
-        self.assertEqual('user not found', res['error'])
+        self.assertEqual(404, res.status_code)
+        self.assertEqual('this resource does not exist', data['error'])
 
     def test_fetch_empty_db(self):
-        fetch = self.fetch()
-        res = json.loads(fetch.data)
+        res = self.fetch()
+        data = json.loads(res.data)
 
-        self.assertEqual(0, len(res['users']))
+        self.assertEqual(200, res.status_code)
+        self.assertEqual(0, len(data['users']))
 
     def test_fetch_with_phone_number(self):
         self.insert(role='farmer', phone_number='123',
@@ -184,11 +160,12 @@ class UserTest(unittest.TestCase):
         self.insert(role='hutan_biru', phone_number='321',
                     first_name='Kat')
 
-        fetch = self.fetch(phone_number='123')
-        res = json.loads(fetch.data)
+        res = self.fetch(phone_number='123')
+        data = json.loads(res.data)
 
-        r = res['users']
+        r = data['users']
 
+        self.assertEqual(200, res.status_code)
         self.assertEqual(1, len(r))
         self.assertEqual('123', r[0]['phone_number'])
         self.assertEqual('Erika', r[0]['first_name'])
@@ -200,35 +177,19 @@ class UserTest(unittest.TestCase):
         self.insert(role='farmer', phone_number='123',
                     first_name='Erika')
 
-        fetch = self.fetch()
-        res = json.loads(fetch.data)
+        res = self.fetch()
+        data = json.loads(res.data)
 
-        r = res['users']
+        r = data['users']
 
+        self.assertEqual(200, res.status_code)
         self.assertEqual(2, len(r))
-
-    def test_fetch_sorted_from_recently_created(self):
-        self.insert(role='hutan_biru', phone_number='321',
-                    first_name='Kat')
-        time.sleep(1)
-
-        self.insert(role='farmer', phone_number='123',
-                    first_name='Erika')
-        time.sleep(1)
-
-        self.insert(role='hutan_biru', phone_number='531',
-                    first_name='Ratna')
-        time.sleep(1)
-
-        fetch = self.fetch()
-        res = json.loads(fetch.data)
-
-        r = res['users']
-
-        self.assertEqual(3, len(r))
-        self.assertGreater(r[0]['ts_created'], r[1]['ts_created'])
-        self.assertGreater(r[1]['ts_created'], r[2]['ts_created'])
-        self.assertGreater(r[0]['ts_created'], r[2]['ts_created'])
+        self.assertEqual('123', r[0]['phone_number'])
+        self.assertEqual('Erika', r[0]['first_name'])
+        self.assertEqual('farmer', r[0]['role'])
+        self.assertEqual('321', r[1]['phone_number'])
+        self.assertEqual('Kat', r[1]['first_name'])
+        self.assertEqual('hutan_biru', r[1]['role'])
 
 
 if __name__ == '__main__':

@@ -1,11 +1,12 @@
-from google.appengine.ext import ndb
 import time
-
-roles = ['hutan_biru', 'farmer']
+from .util import id
+from google.appengine.ext import ndb
 
 
 class User(ndb.Model):
-    role = ndb.StringProperty(required=True, choices=set(roles))
+    ROLES = ['hutan_biru', 'farmer']
+
+    role = ndb.StringProperty(required=True, choices=set(ROLES))
     phone_number = ndb.StringProperty(required=True)
     first_name = ndb.StringProperty(required=True)
     last_name = ndb.StringProperty()
@@ -14,7 +15,7 @@ class User(ndb.Model):
 
     def toJson(self):
         return {
-            'id': str(self.key.id()),
+            'id': self.key.id(),
             'role': self.role,
             'phone_number': self.phone_number,
             'first_name': self.first_name,
@@ -22,3 +23,7 @@ class User(ndb.Model):
             'ts_created': int(time.mktime(self.ts_created.timetuple()) * 1000),
             'ts_updated': int(time.mktime(self.ts_updated.timetuple()) * 1000),
         }
+
+    @staticmethod
+    def id():
+        return 'U{}'.format(id.generate())

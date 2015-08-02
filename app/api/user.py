@@ -1,99 +1,53 @@
-from flask import Flask, jsonify, request, abort
-from google.appengine.ext import ndb
-from app.model.user import User, roles
-import time
+from flask import Flask, request, abort
+from app.model.user import User
+from app.util.flask_common import (
+    jsonify,
+    enable_json_error,
+    ensure_param,
+)
+
 
 app = Flask(__name__)
+enable_json_error(app)
 
 
-def generic_error_handler(error):
-    if not hasattr(error, 'description'):
-        return error
-    return jsonify(error.description), error.code
-
-for error in range(400, 420) + range(500, 506):
-    app.error_handler_spec[None][error] = generic_error_handler
-
-
-def validate(req):
-    if not req:
-        abort(400, {'error': 'missing request data'})
-
-    props = User._properties
-    keys = props.keys()
-
-    for key in keys:
-        if props[key]._required:
-            if key not in req:
-                abort(400, {'error': '{0} is required'.format(key)})
-
-            if isinstance(props[key], ndb.StringProperty) and \
-               type(req[key]) not in [str, unicode]:
-                    abort(400, {'error': '{0} is not string'.format(key)})
-
-    if req['role'] not in roles:
-        abort(400, {'error': 'invalid role, '
-                             'should be: {0}'.format(' or '.join(roles))})
-
-
-@app.route('/v1/users', methods=['PUT'])
+@app.route('/v1/users', methods=['POST'])
+@ensure_param('phone_number')
+@ensure_param('first_name')
+@ensure_param('role', enums=User.ROLES)
+@jsonify
 def insert():
-    req = request.get_json(force=True)
-    validate(req)
-
-    new = User(role=req['role'],
-               phone_number=req['phone_number'],
-               first_name=req['first_name'])
-
-    if 'last_name' in req:
-        new.last_name = req['last_name']
-    else:
-        new.last_name = None
+    new = User(id=User.id(),
+               role=request.form.get('role'),
+               phone_number=request.form.get('phone_number'),
+               first_name=request.form.get('first_name'),
+               last_name=request.form.get('last_name', None))
 
     new.put()
-    return jsonify(new.toJson())
+    return new.toJson()
 
 
 @app.route('/v1/users', methods=['GET'])
+@jsonify
 def fetch():
-    phone = request.args.get('phone_number')
+    phone_number = request.args.get('phone_number')
 
-    if not phone:
-        users = User.query().order(-User.ts_created).fetch()
-    else:
-        users = User.query(User.phone_number == phone).order(-User.ts_created)
+    query = User.query()
+    if phone_number:
+        query = User.query(User.phone_number == phone_number)
 
-    res = {
+    users = query.order(-User.ts_created).fetch()
+
+    return {
         'users': [u.toJson() for u in users] if users else []
     }
 
-    return jsonify(res)
 
-
-def get_user(userid):
-    if not userid or userid == '':
-        abort(400, {'error': 'userid is required'})
-
-    userid = int(userid)
-    user = User.get_by_id(userid)
+@app.route('/v1/users/<user_id>', methods=['GET'])
+@jsonify
+def retrieve(user_id):
+    user = User.get_by_id(user_id)
     if not user:
-        abort(400, {'error': 'user not found'})
+        abort(404, 'this resource does not exist')
 
-    return user
-
-
-@app.route('/v1/users/<userid>', methods=['GET'])
-def retrieve(userid):
-    data = get_user(userid)
-
-    res = {
-        'id': str(data.key.id()),
-        'role': data.role,
-        'phone_number': data.phone_number,
-        'first_name': data.first_name,
-        'last_name': data.last_name,
-        'ts_created': int(time.mktime(data.ts_created.timetuple()) * 1000),
-        'ts_updated': int(time.mktime(data.ts_updated.timetuple()) * 1000)
-    }                                           # Timestamp in epoch milis
-
-    return jsonify(**res)
+    return user.toJson()
