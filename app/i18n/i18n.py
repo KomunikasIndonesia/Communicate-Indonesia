@@ -1,15 +1,11 @@
 class i18n(object):
 
     def __init__(self):
-        # Supported languages
-        self.lang = ['idn']
-
         # Default domain
         self._domain = 'idn'
 
     def domain(self, country):
-        if country in self.lang:
-            self._domain = country
+        self._domain = country
 
     def translate(self, domain):
         dic = {}
@@ -51,7 +47,8 @@ class i18n(object):
             'squid':            'cumicumi',
             'clam':             'kerang'
         }
-        return dic[domain]
+
+        return dic[domain] if domain in dic.keys() else {}
 
     def __call__(self, string):
         t = self.translate(self._domain)

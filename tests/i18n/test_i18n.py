@@ -23,3 +23,16 @@ class i18test(unittest.TestCase):
         self.assertEqual(_('rice'), 'padi')
         self.assertEqual(_('milkfish'), 'bandeng')
         self.assertEqual(_('banana'), 'pisang')
+
+    def test_with_undefined_phrase(self):
+        self.assertEqual(_('tokyo'), 'tokyo')
+        self.assertEqual(_('london'), 'london')
+        self.assertEqual(_('bandung'), 'bandung')
+
+    def test_with_undefined_domain(self):
+        _.domain('jp')
+
+        self.assertEqual(_('potato'), 'potato')
+        self.assertEqual(_('rice'), 'rice')
+        self.assertEqual(_('milkfish'), 'milkfish')
+        self.assertEqual(_('banana'), 'banana')
