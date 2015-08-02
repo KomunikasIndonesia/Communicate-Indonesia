@@ -34,7 +34,7 @@ server:
 
 test:
 	. venv/bin/activate; \
-	nosetests tests --with-gae --gae-lib-root=tmp/google_appengine
+	nosetests tests --with-gae --gae-lib-root=tmp/google_appengine --logging-level=INFO
 
 flake8:
 	. venv/bin/activate; flake8 app tests --max-line-length=100
