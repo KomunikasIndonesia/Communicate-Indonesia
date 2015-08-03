@@ -25,6 +25,9 @@ class DistrictTest(unittest.TestCase):
     def list(self, *args, **kwargs):
         return self.app.get('/v1/districts', query_string=kwargs)
 
+    def fetch(self, district_id, **kwargs):
+        return self.app.get('/v1/districts/' + district_id, query_string=kwargs)
+
     def test_insert_district(self):
         res = self.insert(name='sulawesi')
         data = json.loads(res.data)
@@ -33,6 +36,13 @@ class DistrictTest(unittest.TestCase):
         self.assertEqual('sulawesi', data['name'])
         self.assertIsNotNone(data['ts_created'])
         self.assertIsNotNone(data['ts_updated'])
+
+    def test_insert_without_name(self):
+        res = self.insert(name=None)
+        data = json.loads(res.data)
+
+        self.assertEqual(400, res.status_code)
+        self.assertEqual('name is required', data['error'])
 
     def test_list_one_district(self):
         self.insert(name='sulawesi')
@@ -77,3 +87,13 @@ class DistrictTest(unittest.TestCase):
 
         self.assertEqual(1, len(districts))
         self.assertEqual('new york', districts[0]['name'])
+
+    def test_get_by_id(self):
+        res = self.insert(name='sulawesi')
+        expected = json.loads(res.data)
+
+        res = self.fetch(expected['id'])
+        fetched = json.loads(res.data)
+
+        self.assertEqual(200, res.status_code)
+        self.assertEqual(expected, fetched)
