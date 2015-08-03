@@ -23,7 +23,7 @@ class User(ndb.Model):
         return {
             'id': self.key.id(),
             'role': self.role,
-            'district': self.district_id,
+            'district_id': self.district_id,
             'phone_number': self.phone_number,
             'first_name': self.first_name,
             'last_name': self.last_name,

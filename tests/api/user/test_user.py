@@ -17,8 +17,7 @@ class UserTest(unittest.TestCase):
         self.testbed.init_datastore_v3_stub()
         self.testbed.init_memcache_stub()
 
-        self.district = District(id=District.id(),
-                                 name='sulawesi')
+        self.district = District(id='district_id', name='sulawesi')
         self.district.put()
 
         ndb.get_context().clear_cache()
@@ -46,6 +45,7 @@ class UserTest(unittest.TestCase):
         self.assertEqual('1234567', data['phone_number'])
         self.assertEqual('Kat', data['first_name'])
         self.assertEqual('Leigh', data['last_name'])
+        self.assertEqual('district_id', data['district_id'])
 
         self.assertEqual(1, len(User.query().fetch()))
 
@@ -214,6 +214,7 @@ class UserTest(unittest.TestCase):
         self.assertEqual('123', r[0]['phone_number'])
         self.assertEqual('Erika', r[0]['first_name'])
         self.assertEqual('farmer', r[0]['role'])
+        self.assertEqual('district_id', r[0]['district_id'])
         self.assertEqual('321', r[1]['phone_number'])
         self.assertEqual('Kat', r[1]['first_name'])
         self.assertEqual('hutan_biru', r[1]['role'])
