@@ -48,7 +48,7 @@ class i18n(object):
             'clam':             'kerang'
         }
 
-        return dic[domain] if domain in dic.keys() else {}
+        return dic[domain] if domain in dic else {}
 
     def __call__(self, string):
         t = self.translate(self._domain)

@@ -1,5 +1,5 @@
 import unittest
-from app.i18n.trans import _
+from app.i18n import _
 
 
 class i18test(unittest.TestCase):
