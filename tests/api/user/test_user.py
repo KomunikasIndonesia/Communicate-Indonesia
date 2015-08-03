@@ -1,5 +1,7 @@
+import logging
 import unittest
 from app.api.user import app
+from app.model.district import District
 from app.model.user import User
 from google.appengine.ext import ndb, testbed
 import json
@@ -14,6 +16,9 @@ class UserTest(unittest.TestCase):
         self.testbed.activate()
         self.testbed.init_datastore_v3_stub()
         self.testbed.init_memcache_stub()
+
+        self.district = District(id='district_id', name='sulawesi')
+        self.district.put()
 
         ndb.get_context().clear_cache()
 
@@ -31,7 +36,8 @@ class UserTest(unittest.TestCase):
 
     def test_insert_user(self):
         res = self.insert(role='farmer', phone_number='1234567',
-                          first_name='Kat', last_name='Leigh')
+                          first_name='Kat', last_name='Leigh',
+                          district_id=self.district.key.id())
 
         data = json.loads(res.data)
 
@@ -39,8 +45,26 @@ class UserTest(unittest.TestCase):
         self.assertEqual('1234567', data['phone_number'])
         self.assertEqual('Kat', data['first_name'])
         self.assertEqual('Leigh', data['last_name'])
+        self.assertEqual('district_id', data['district_id'])
 
         self.assertEqual(1, len(User.query().fetch()))
+
+    def test_insert_without_district(self):
+        res = self.insert(role='farmer', phone_number='1234567',
+                          first_name='Kat', last_name='Leigh')
+        data = json.loads(res.data)
+
+        self.assertEqual(400, res.status_code)
+        self.assertEqual('district_id is required', data['error'])
+
+    def test_insert_with_non_existent_district(self):
+        res = self.insert(role='farmer', phone_number='1234567',
+                          first_name='Kat', last_name='Leigh',
+                          district_id='Dsomerandomid')
+        data = json.loads(res.data)
+
+        self.assertEqual(400, res.status_code)
+        self.assertEqual('Dsomerandomid is an invalid district_id', data['error'])
 
     def test_insert_without_optional_param(self):
         res = self.insert(role='hutan_biru', phone_number='1234567',
@@ -94,7 +118,8 @@ class UserTest(unittest.TestCase):
 
     def test_with_different_roles(self):
         self.insert(role='farmer', phone_number='1234567',
-                    first_name='Kat', last_name='Leigh')
+                    first_name='Kat', last_name='Leigh',
+                    district_id=self.district.key.id())
 
         self.insert(role='hutan_biru', phone_number='1234567',
                     first_name='Kat', last_name='Leigh')
@@ -156,7 +181,8 @@ class UserTest(unittest.TestCase):
 
     def test_fetch_with_phone_number(self):
         self.insert(role='farmer', phone_number='123',
-                    first_name='Erika')
+                    first_name='Erika',
+                    district_id=self.district.key.id())
         self.insert(role='hutan_biru', phone_number='321',
                     first_name='Kat')
 
@@ -175,7 +201,8 @@ class UserTest(unittest.TestCase):
         self.insert(role='hutan_biru', phone_number='321',
                     first_name='Kat')
         self.insert(role='farmer', phone_number='123',
-                    first_name='Erika')
+                    first_name='Erika',
+                    district_id=self.district.key.id())
 
         res = self.fetch()
         data = json.loads(res.data)
@@ -187,6 +214,7 @@ class UserTest(unittest.TestCase):
         self.assertEqual('123', r[0]['phone_number'])
         self.assertEqual('Erika', r[0]['first_name'])
         self.assertEqual('farmer', r[0]['role'])
+        self.assertEqual('district_id', r[0]['district_id'])
         self.assertEqual('321', r[1]['phone_number'])
         self.assertEqual('Kat', r[1]['first_name'])
         self.assertEqual('hutan_biru', r[1]['role'])

@@ -1,4 +1,5 @@
 from flask import Flask, request, abort
+from app.model.district import District
 from app.model.user import User
 from app.util.flask_common import (
     jsonify,
@@ -17,8 +18,20 @@ enable_json_error(app)
 @ensure_param('role', enums=User.ROLES)
 @jsonify
 def insert():
+    role = request.form.get('role')
+    district_id = request.form.get('district_id', None)
+
+    if role == User.ROLE_FARMER:
+        if not district_id:
+            abort(400, 'district_id is required')
+
+        district = District.get_by_id(district_id)
+        if not district:
+            abort(400, '{} is an invalid district_id'.format(district_id))
+
     new = User(id=User.id(),
-               role=request.form.get('role'),
+               role=role,
+               district_id=district_id,
                phone_number=request.form.get('phone_number'),
                first_name=request.form.get('first_name'),
                last_name=request.form.get('last_name', None))
