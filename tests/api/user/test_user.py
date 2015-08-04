@@ -37,7 +37,7 @@ class UserTest(unittest.TestCase):
         apikey = apikey or self.APIKEY
 
         return {
-            'Authorization': \
+            'Authorization':
                 'Basic ' + b64encode("{}:{}".format(username, apikey))
         }
 
@@ -308,9 +308,9 @@ class UserTest(unittest.TestCase):
 
     def test_insert_with_invalid_admin(self):
         res = self.insert_with_invalid_admin(role='farmer',
-                                       phone_number='1234567',
-                                       first_name='Kat', last_name='Leigh',
-                                       district_id=self.district.key.id())
+                                             phone_number='1234567',
+                                             first_name='Kat',
+                                             district_id=self.district.key.id())
 
         data = json.loads(res.data)
 
@@ -344,9 +344,9 @@ class UserTest(unittest.TestCase):
 
     def test_insert_with_invalid_apikey(self):
         res = self.insert_with_invalid_apikey(role='farmer',
-                                       phone_number='1234567',
-                                       first_name='Kat', last_name='Leigh',
-                                       district_id=self.district.key.id())
+                                              phone_number='1234567',
+                                              first_name='Kat',
+                                              district_id=self.district.key.id())
 
         data = json.loads(res.data)
 
