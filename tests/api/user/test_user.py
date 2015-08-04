@@ -3,13 +3,17 @@ import unittest
 from app.api.user import app
 from app.model.district import District
 from app.model.user import User
+from app.model.config import Config
 from google.appengine.ext import ndb, testbed
 import json
+from base64 import b64encode
 
 
 class UserTest(unittest.TestCase):
 
     def setUp(self):
+        self.APIKEY = '123456789'
+
         self.app = app.test_client()
 
         self.testbed = testbed.Testbed()
@@ -20,19 +24,67 @@ class UserTest(unittest.TestCase):
         self.district = District(id='district_id', name='sulawesi')
         self.district.put()
 
+        self.config = Config(apikey=self.APIKEY)
+        self.config.put()
+
         ndb.get_context().clear_cache()
 
     def tearDown(self):
         self.testbed.deactivate()
 
+    def headers(self, username=None, apikey=None):
+        username = username or 'admin'
+        apikey = apikey or self.APIKEY
+
+        return {
+            'Authorization': \
+                'Basic ' + b64encode("{}:{}".format(username, apikey))
+        }
+
     def insert(self, **kwargs):
-        return self.app.post('/v1/users', data=kwargs)
+        headers = self.headers()
+        return self.app.post('/v1/users', data=kwargs, headers=headers)
 
     def retrieve(self, user_id):
-        return self.app.get('/v1/users/{0}'.format(user_id))
+        headers = self.headers()
+        return self.app.get('/v1/users/{}'.format(user_id), headers=headers)
 
     def fetch(self, **kwargs):
+        headers = self.headers()
+        return self.app.get('/v1/users', query_string=kwargs, headers=headers)
+
+    def insert_without_auth(self, **kwargs):
+        return self.app.post('/v1/users', data=kwargs)
+
+    def retrieve_without_auth(self, user_id):
+        return self.app.get('/v1/users/{}'.format(user_id))
+
+    def fetch_without_auth(self, **kwargs):
         return self.app.get('/v1/users', query_string=kwargs)
+
+    def insert_with_invalid_admin(self, **kwargs):
+        headers = self.headers(username='billjobs')
+        return self.app.post('/v1/users', data=kwargs, headers=headers)
+
+    def retrieve_with_invalid_admin(self, user_id):
+        headers = self.headers(username='billjobs')
+        return self.app.get('/v1/users/{}'.format(user_id), headers=headers)
+
+    def fetch_with_invalid_admin(self, **kwargs):
+        headers = self.headers(username='billjobs')
+        return self.app.get('/v1/users', query_string=kwargs, headers=headers)
+
+    def insert_with_invalid_apikey(self, **kwargs):
+        headers = self.headers('admin', '663377')
+        return self.app.post('/v1/users', data=kwargs, headers=headers)
+
+    def retrieve_with_invalid_apikey(self, user_id):
+        headers = self.headers('admin', '663377')
+        return self.app.get('/v1/users/{}'.format(user_id), headers=headers)
+
+    def fetch_with_invalid_apikey(self, **kwargs):
+        headers = self.headers('admin', '663377')
+        return self.app.get('/v1/users', query_string=kwargs, headers=headers)
 
     def test_insert_user(self):
         res = self.insert(role='farmer', phone_number='1234567',
@@ -218,6 +270,113 @@ class UserTest(unittest.TestCase):
         self.assertEqual('321', r[1]['phone_number'])
         self.assertEqual('Kat', r[1]['first_name'])
         self.assertEqual('hutan_biru', r[1]['role'])
+
+    def test_insert_without_auth(self):
+        res = self.insert_without_auth(role='farmer', phone_number='1234567',
+                                       first_name='Kat', last_name='Leigh',
+                                       district_id=self.district.key.id())
+
+        data = json.loads(res.data)
+
+        self.assertEqual(400, res.status_code)
+        self.assertEqual('unauthorized access', data['error'])
+
+        self.assertEqual(0, len(User.query().fetch()))
+
+    def test_retrieve_without_auth(self):
+        req = self.insert(role='hutan_biru', phone_number='321',
+                          first_name='Kat', last_name='Leigh')
+
+        data = json.loads(req.data)
+
+        res = self.retrieve_without_auth(data['id'])
+        r = json.loads(res.data)
+
+        self.assertEqual(400, res.status_code)
+        self.assertEqual('unauthorized access', r['error'])
+
+    def test_fetch_without_auth(self):
+        self.insert(role='farmer', phone_number='123',
+                    first_name='Erika',
+                    district_id=self.district.key.id())
+
+        res = self.fetch_without_auth(phone_number='123')
+        data = json.loads(res.data)
+
+        self.assertEqual(400, res.status_code)
+        self.assertEqual('unauthorized access', data['error'])
+
+    def test_insert_with_invalid_admin(self):
+        res = self.insert_with_invalid_admin(role='farmer',
+                                       phone_number='1234567',
+                                       first_name='Kat', last_name='Leigh',
+                                       district_id=self.district.key.id())
+
+        data = json.loads(res.data)
+
+        self.assertEqual(400, res.status_code)
+        self.assertEqual('unauthorized access', data['error'])
+
+        self.assertEqual(0, len(User.query().fetch()))
+
+    def test_retrieve_with_invalid_admin(self):
+        req = self.insert(role='hutan_biru', phone_number='321',
+                          first_name='Kat', last_name='Leigh')
+
+        data = json.loads(req.data)
+
+        res = self.retrieve_with_invalid_admin(data['id'])
+        r = json.loads(res.data)
+
+        self.assertEqual(400, res.status_code)
+        self.assertEqual('unauthorized access', r['error'])
+
+    def test_fetch_with_invalid_admin(self):
+        self.insert(role='farmer', phone_number='123',
+                    first_name='Erika',
+                    district_id=self.district.key.id())
+
+        res = self.fetch_with_invalid_admin(phone_number='123')
+        data = json.loads(res.data)
+
+        self.assertEqual(400, res.status_code)
+        self.assertEqual('unauthorized access', data['error'])
+
+    def test_insert_with_invalid_apikey(self):
+        res = self.insert_with_invalid_apikey(role='farmer',
+                                       phone_number='1234567',
+                                       first_name='Kat', last_name='Leigh',
+                                       district_id=self.district.key.id())
+
+        data = json.loads(res.data)
+
+        self.assertEqual(400, res.status_code)
+        self.assertEqual('invalid apikey', data['error'])
+
+        self.assertEqual(0, len(User.query().fetch()))
+
+    def test_retrieve_with_invalid_apikey(self):
+        req = self.insert(role='hutan_biru', phone_number='321',
+                          first_name='Kat', last_name='Leigh')
+
+        data = json.loads(req.data)
+
+        res = self.retrieve_with_invalid_apikey(data['id'])
+        r = json.loads(res.data)
+
+        self.assertEqual(400, res.status_code)
+        self.assertEqual('invalid apikey', r['error'])
+
+    def test_fetch_with_invalid_apikey(self):
+        self.insert(role='farmer', phone_number='123',
+                    first_name='Erika',
+                    district_id=self.district.key.id())
+
+        res = self.fetch_with_invalid_apikey(phone_number='123')
+        data = json.loads(res.data)
+
+        self.assertEqual(400, res.status_code)
+        self.assertEqual('invalid apikey', data['error'])
 
 
 if __name__ == '__main__':

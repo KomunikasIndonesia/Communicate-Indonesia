@@ -5,6 +5,7 @@ from app.util.flask_common import (
     jsonify,
     enable_json_error,
     ensure_param,
+    require_apikey
 )
 
 
@@ -13,6 +14,7 @@ enable_json_error(app)
 
 
 @app.route('/v1/users', methods=['POST'])
+@require_apikey
 @ensure_param('phone_number')
 @ensure_param('first_name')
 @ensure_param('role', enums=User.ROLES)
@@ -41,6 +43,7 @@ def insert():
 
 
 @app.route('/v1/users', methods=['GET'])
+@require_apikey
 @jsonify
 def fetch():
     phone_number = request.args.get('phone_number')
@@ -57,6 +60,7 @@ def fetch():
 
 
 @app.route('/v1/users/<user_id>', methods=['GET'])
+@require_apikey
 @jsonify
 def retrieve(user_id):
     user = User.get_by_id(user_id)
