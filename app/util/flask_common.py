@@ -1,5 +1,6 @@
 from functools import wraps
 from flask import json, request, abort
+from app.model.config import Config
 
 
 def enable_json_error(app):
@@ -43,3 +44,23 @@ def ensure_param(name, enums=None):
         return inner
 
     return decorator
+
+
+def require_apikey(func):
+    """Require an API key to store and get data"""
+    @wraps(func)
+    def inner(*args, **kwargs):
+        keys = Config.query().fetch()
+        apikeys = [k.toJson()['apikey'] for k in keys]
+
+        auth = request.authorization
+
+        if not auth or auth.username != 'admin':
+            abort(400, "unauthorized access")
+
+        if auth.password not in apikeys:
+            abort(400, "invalid apikey")
+
+        return func(*args, **kwargs)
+
+    return inner
