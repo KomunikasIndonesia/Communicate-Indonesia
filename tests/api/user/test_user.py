@@ -11,6 +11,7 @@ from base64 import b64encode
 class UserTest(unittest.TestCase):
 
     def setUp(self):
+        self.ADMIN = 'admin'
         self.APIKEY = '123456789'
 
         self.app = app.test_client()
@@ -23,7 +24,8 @@ class UserTest(unittest.TestCase):
         self.district = District(id='district_id', name='sulawesi')
         self.district.put()
 
-        self.config = Config(apikey=self.APIKEY)
+        self.config = Config(admin_username=self.ADMIN,
+                             admin_apikey=self.APIKEY)
         self.config.put()
 
         ndb.get_context().clear_cache()
@@ -32,7 +34,7 @@ class UserTest(unittest.TestCase):
         self.testbed.deactivate()
 
     def headers(self, username=None, apikey=None):
-        username = username or 'admin'
+        username = username or self.ADMIN
         apikey = apikey or self.APIKEY
 
         return {
@@ -350,7 +352,7 @@ class UserTest(unittest.TestCase):
         data = json.loads(res.data)
 
         self.assertEqual(400, res.status_code)
-        self.assertEqual('invalid apikey', data['error'])
+        self.assertEqual('unauthorized access', data['error'])
 
         self.assertEqual(0, len(User.query().fetch()))
 
@@ -364,7 +366,7 @@ class UserTest(unittest.TestCase):
         r = json.loads(res.data)
 
         self.assertEqual(400, res.status_code)
-        self.assertEqual('invalid apikey', r['error'])
+        self.assertEqual('unauthorized access', r['error'])
 
     def test_fetch_with_invalid_apikey(self):
         self.insert(role='farmer', phone_number='123',
@@ -375,7 +377,7 @@ class UserTest(unittest.TestCase):
         data = json.loads(res.data)
 
         self.assertEqual(400, res.status_code)
-        self.assertEqual('invalid apikey', data['error'])
+        self.assertEqual('unauthorized access', data['error'])
 
 
 if __name__ == '__main__':
