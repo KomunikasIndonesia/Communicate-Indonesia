@@ -1,4 +1,3 @@
-import logging
 import unittest
 from app.api.user import app
 from app.model.district import District

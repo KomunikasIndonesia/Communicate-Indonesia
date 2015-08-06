@@ -28,12 +28,18 @@ class SmsRequest(ndb.Model):
     ts_created = ndb.DateTimeProperty(auto_now_add=True)
     ts_updated = ndb.DateTimeProperty(auto_now=True)
 
-
     def __init__(self, *args, **kwargs):
         super(SmsRequest, self).__init__(*args, **kwargs)
 
         # the user associated to the from number
         self.user = None
+
+    @property
+    def valid(self):
+        return self.twilio_message_id and \
+            self.from_number and \
+            self.to_number and \
+            self.body
 
     @property
     def from_(self):

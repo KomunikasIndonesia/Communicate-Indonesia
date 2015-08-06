@@ -34,25 +34,31 @@ def incoming_twilio_sms():
                      to_zip=request.form.get('ToZip'),
                      to_country=request.form.get('ToCountry'))
 
+    if not sms.valid:
+        app.logger.error(request)
+        abort(400, 'invalid request')
+
     # store all sms for auditing
     sms.put()
 
     # load application data associated with the sms
     sms.user = User.query(User.phone_number == sms.from_number).fetch()
     if not sms.user:
-        abort(400, 'the phone number {} does not belong to a user'.format(sms.from_number))
+        abort(400, 'The phone number {} does not belong to a user'.format(sms.from_number))
 
     response_twiml = twiml.Response()
 
+    # dispatch sms request
     response_message = dispatcher.dispatch(sms)
+
     if response_message:
         response_twiml.sms(to=sms.from_number,
-                           sender='11111111111',  # TODO - add this to configuration
+                           sender='123456',  # TODO - add this to configuration
                            msg=response_message)
 
     # update sms processed state
     sms.processed = True
-    sms.ts_processed = datetime.datetime.now()
+    sms.ts_processed = datetime.now()
     sms.put()
 
-    return str(twiml.Response())
+    return str(response_twiml)

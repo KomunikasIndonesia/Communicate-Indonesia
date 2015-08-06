@@ -15,7 +15,9 @@ install: clean git-hooks venv
 	pip install -r requirements.txt -t lib/ --ignore-installed; \
 	. venv/bin/activate; \
 	pip install flake8; \
-	pip install nose; pip install nosegae;\
+	pip install nose; \
+	pip install nosegae;\
+	pip install mock;
 
 create-tmp:
 	mkdir -p tmp
