@@ -41,14 +41,6 @@ class SmsRequest(ndb.Model):
             self.to_number and \
             self.body
 
-    @property
-    def from_(self):
-        return self.from_number
-
-    @property
-    def to(self):
-        return self.to_number
-
     @staticmethod
     def id():
         return 'SMS{}'.format(id.generate())

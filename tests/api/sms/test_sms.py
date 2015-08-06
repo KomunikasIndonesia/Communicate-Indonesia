@@ -4,6 +4,7 @@ from mock import patch
 
 from app.api.sms import app
 from google.appengine.ext import ndb, testbed
+from app.model.sms_request import SmsRequest
 from app.model.user import User
 
 
@@ -56,6 +57,53 @@ class SmsTest(unittest.TestCase):
         self.assertEqual(200, res.status_code)
         self.assertEqual('<?xml version="1.0" encoding="UTF-8"?>'
                          '<Response />', res.data)
+
+    @patch('app.api.sms.main.dispatcher')
+    def test_request_should_be_logged_in_datastore(self, mock):
+        mock.dispatch.return_value = None
+
+        res = self.app.post('/v1/sms/twilio', data={
+            'MessageSid': 'sid',
+            'From': self.user.phone_number,
+            'To': '+321',
+            'Body': 'jual'
+        })
+
+        self.assertEqual(200, res.status_code)
+
+        all_sms = SmsRequest.query().fetch()
+        self.assertEqual(1, len(all_sms))
+
+        sms = all_sms[0]
+        self.assertEqual('sid', sms.twilio_message_id)
+        self.assertTrue(sms.processed)
+        self.assertEqual(self.user.phone_number, sms.from_number)
+        self.assertEqual('+321', sms.to_number)
+        self.assertEqual('jual', sms.body)
+
+    @patch('app.api.sms.main.dispatcher')
+    def test_log_bad_request(self, mock):
+        mock.dispatch.side_effect = Exception('can not process sms request '
+                                              'because of bad action or '
+                                              'dispatcher')
+
+        with self.assertRaises(Exception):
+            self.app.post('/v1/sms/twilio', data={
+                'MessageSid': 'sid',
+                'From': self.user.phone_number,
+                'To': '+321',
+                'Body': 'jual'
+            })
+
+        all_sms = SmsRequest.query().fetch()
+        self.assertEqual(1, len(all_sms))
+
+        sms = all_sms[0]
+        self.assertEqual('sid', sms.twilio_message_id)
+        self.assertFalse(sms.processed)
+        self.assertEqual(self.user.phone_number, sms.from_number)
+        self.assertEqual('+321', sms.to_number)
+        self.assertEqual('jual', sms.body)
 
     def test_unknown_from_number(self):
         res = self.app.post('/v1/sms/twilio', data={
