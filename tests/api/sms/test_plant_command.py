@@ -1,6 +1,7 @@
 import unittest
+
 from app.api.sms.plant_action import PlantCommand
-from app.api.sms.sms_request import SmsRequest
+from app.model.sms_request import SmsRequest
 
 
 class PlantCommandTest(unittest.TestCase):

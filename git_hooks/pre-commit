@@ -1,2 +1,5 @@
+#!/bin/bash
+set -e
+
 make flake8;
 make test;

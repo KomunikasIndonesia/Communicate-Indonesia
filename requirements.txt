@@ -7,4 +7,4 @@
 
 Flask==0.10.1
 Twilio==4.4.0
-editdistance=0.2
+editdistance==0.2
