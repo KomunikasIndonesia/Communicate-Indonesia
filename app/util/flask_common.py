@@ -50,16 +50,13 @@ def require_apikey(func):
     """Require an API key to store and get data"""
     @wraps(func)
     def inner(*args, **kwargs):
-        keys = Config.query().fetch()
-        apikeys = [k.toJson()['apikey'] for k in keys]
-
+        config = Config.query().fetch()[0]
         auth = request.authorization
 
-        if not auth or auth.username != 'admin':
-            abort(400, "unauthorized access")
-
-        if auth.password not in apikeys:
-            abort(400, "invalid apikey")
+        if not auth \
+            or auth.username != config.admin_username \
+            or auth.password != config.admin_apikey:
+                abort(400, "unauthorized access")
 
         return func(*args, **kwargs)
 
