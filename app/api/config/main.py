@@ -1,6 +1,5 @@
 from flask import Flask, request, abort
-from app.model.config import Config
-from google.appengine.ext import ndb
+from app.model.config import Config, delete_config
 from app.util.flask_common import (
     jsonify,
     enable_json_error,
@@ -25,10 +24,9 @@ def config():
         if not admin_username or not admin_apikey:
             abort(400, 'missing required parameters')
 
-        ndb.delete_multi(Config.query().fetch(keys_only=True))
-
         new = Config(admin_username=admin_username,
                      admin_apikey=admin_apikey)
+        delete_config()
         new.put()
 
     else:
