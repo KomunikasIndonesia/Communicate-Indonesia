@@ -146,17 +146,6 @@ class UserTest(unittest.TestCase):
 
         self.assertEqual(1, len(Config.query().fetch()))
 
-    def test_update_without_auth(self):
-        res = self.config_with_invalid_apikey(update='true',
-                                              admin_username='kat',
-                                              admin_apikey='123')
-        data = json.loads(res.data)
-
-        self.assertEqual(400, res.status_code)
-        self.assertEqual('unauthorized access', data['error'])
-
-        self.assertEqual(1, len(Config.query().fetch()))
-
 
 if __name__ == '__main__':
     unittest.main()
