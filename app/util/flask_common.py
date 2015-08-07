@@ -55,8 +55,8 @@ def require_apikey(func):
 
         if not auth \
             or auth.username != config.admin_username \
-            or auth.password != config.admin_apikey:
-                abort(400, "unauthorized access")
+                or auth.password != config.admin_apikey:
+                    abort(400, "unauthorized access")
 
         return func(*args, **kwargs)
 
