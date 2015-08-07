@@ -4,7 +4,6 @@ from google.appengine.ext import ndb
 from app.util.flask_common import (
     jsonify,
     enable_json_error,
-    ensure_param,
     require_apikey
 )
 
@@ -30,7 +29,6 @@ def config():
 
         new = Config(admin_username=admin_username,
                      admin_apikey=admin_apikey)
-
         new.put()
 
     else:
