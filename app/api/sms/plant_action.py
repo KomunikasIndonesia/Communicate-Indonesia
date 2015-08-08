@@ -14,13 +14,13 @@ class PlantCommand(ThreeArgCommand):
     """
     Represents a plant command
 
-    A sell command can take the form of:
+    A plant command can take the form of:
         <command> <value> <plant>
         <command> <plant> <value>
 
     eg.
-        sell 20 potato
-        sell potato 20
+        plant 20 potato
+        plant potato 20
     """
     VALID_CMDS = [
         'plant',  # en
