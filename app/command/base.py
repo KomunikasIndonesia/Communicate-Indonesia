@@ -28,6 +28,27 @@ class Command(object):
         pass
 
 
+class DispatcherError(Exception):
+    """
+    Generic dispatcher error
+    """
+    pass
+
+
+class NoRouteError(DispatcherError):
+    """
+    Dispatcher could not find a valid route
+    """
+    pass
+
+
+class MultipleRouteError(DispatcherError):
+    """
+    Dispatcher found multiple valid routes
+    """
+    pass
+
+
 class Dispatcher(object):
     """
     Dispatcher dispatches actions that match raw data
@@ -45,6 +66,8 @@ class Dispatcher(object):
         """
         Executes the action associated to this command.
         :param data: Raw data
+        :raises NoRouteError: No route could be found
+        :raises MultipleRouteError: Multiple routes were matched
         :return: The return value of the action
         """
         valid_routes = []
@@ -56,14 +79,14 @@ class Dispatcher(object):
                 valid_routes.append(route)
 
         if not valid_routes:
-            raise ValueError('no routes matched')
+            raise NoRouteError('no routes matched')
 
         if len(valid_routes) > 1:
             names = [
                 '{} : {}'.format(route['command_class'], route['action_class'])
                 for route in valid_routes
             ]
-            raise ValueError('multiple routes were matched:\n{}',
-                             '\n'.join(names))
+            raise MultipleRouteError('multiple routes were matched:\n{}',
+                                     '\n'.join(names))
 
         return valid_routes[0]['action_class'](command).execute()

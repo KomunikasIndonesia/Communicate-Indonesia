@@ -1,5 +1,5 @@
 import unittest
-from app.command.base import Dispatcher, Command, Action
+from app.command.base import Dispatcher, Command, Action, NoRouteError, MultipleRouteError
 
 
 class ValidCommand(Command):
@@ -33,10 +33,10 @@ class DispatcherTest(unittest.TestCase):
 
     def test_dispatch_without_valid_command(self):
         self.dispatcher.route(InvalidCommand, EchoAction)
-        self.assertRaises(ValueError, self.dispatcher.dispatch, 'no action')
+        self.assertRaises(NoRouteError, self.dispatcher.dispatch, 'no action')
 
     def test_dispatch_multiple_valid_commands(self):
         self.dispatcher.route(ValidCommand, EchoAction)
         self.dispatcher.route(ValidCommand, EchoAction)
 
-        self.assertRaises(ValueError, self.dispatcher.dispatch, 'no action')
+        self.assertRaises(MultipleRouteError, self.dispatcher.dispatch, 'no action')

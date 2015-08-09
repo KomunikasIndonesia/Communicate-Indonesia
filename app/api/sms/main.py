@@ -4,8 +4,9 @@ from flask import Flask, request, abort
 from twilio import twiml
 
 from app.api.sms.plant_action import PlantCommand, PlantAction
+from app.command.base import Dispatcher, NoRouteError, MultipleRouteError
+from app.i18n import _
 from app.model.sms_request import SmsRequest
-from app.command.base import Dispatcher
 from app.model.user import User
 from app.util.flask_common import enable_json_error
 
@@ -47,9 +48,13 @@ def incoming_twilio_sms():
         abort(400, 'The phone number {} does not belong to a user'.format(sms.from_number))
 
     response_twiml = twiml.Response()
+    response_message = None
 
     # dispatch sms request
-    response_message = dispatcher.dispatch(sms)
+    try:
+        response_message = dispatcher.dispatch(sms)
+    except (NoRouteError, MultipleRouteError):
+        response_message = _('Unknown command')
 
     if response_message:
         response_twiml.sms(to=sms.from_number,
