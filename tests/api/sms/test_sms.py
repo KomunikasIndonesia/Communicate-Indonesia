@@ -4,6 +4,7 @@ from mock import patch
 
 from app.api.sms import app
 from google.appengine.ext import ndb, testbed
+from app.command.base import NoRouteError, MultipleRouteError
 from app.model.sms_request import SmsRequest
 from app.model.user import User
 
@@ -117,6 +118,41 @@ class SmsTest(unittest.TestCase):
         self.assertEqual('The phone number +111 does not belong to a user',
                          json.loads(res.data)['error'])
 
+    @patch('app.api.sms.main.dispatcher')
+    def test_dispatcher_no_route_error(self, mock):
+        mock.dispatch.side_effect = NoRouteError()
+
+        res = self.app.post('/v1/sms/twilio', data={
+            'MessageSid': 'sid',
+            'From': self.user.phone_number,
+            'To': '+321',
+            'Body': 'jual'
+        })
+
+        # should return an sms response to the user
+        self.assertEqual(200, res.status_code)
+        self.assertEqual('<?xml version="1.0" encoding="UTF-8"?>'
+                         '<Response><Sms from="123456" to="+123">'
+                         'Unknown command'
+                         '</Sms></Response>', res.data)
+
+    @patch('app.api.sms.main.dispatcher')
+    def test_dispatcher_multiple_route_error(self, mock):
+        mock.dispatch.side_effect = MultipleRouteError()
+
+        res = self.app.post('/v1/sms/twilio', data={
+            'MessageSid': 'sid',
+            'From': self.user.phone_number,
+            'To': '+321',
+            'Body': 'jual'
+        })
+
+        # should return an sms response to the user
+        self.assertEqual(200, res.status_code)
+        self.assertEqual('<?xml version="1.0" encoding="UTF-8"?>'
+                         '<Response><Sms from="123456" to="+123">'
+                         'Unknown command'
+                         '</Sms></Response>', res.data)
 
 if __name__ == '__main__':
     unittest.main()
