@@ -15,9 +15,10 @@ enable_json_error(app)
 def config():
     update = request.args.get('update')
 
-    config = Config.query().fetch()[0]
-    admin_username = config.admin_username
-    admin_apikey = config.admin_apikey
+    config = Config()
+    existing_configs = Config.query().fetch()
+    if existing_configs:
+        config = existing_configs[0]
 
     if update == 'true':
         admin_username = request.args.get('admin_username')
@@ -26,12 +27,8 @@ def config():
         if not admin_username or not admin_apikey:
             abort(400, 'missing required parameters')
 
-        update = config.key.get()
-        update.admin_username = admin_username
-        update.admin_apikey = admin_apikey
-        update.put()
+        config.admin_username = admin_username
+        config.admin_apikey = admin_apikey
+        config.put()
 
-    return {
-        'admin_username': admin_username,
-        'admin_apikey': admin_apikey
-    }
+    return config.toJson()

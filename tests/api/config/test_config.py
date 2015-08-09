@@ -18,10 +18,6 @@ class UserTest(unittest.TestCase):
         self.testbed.init_datastore_v3_stub()
         self.testbed.init_memcache_stub()
 
-        new = Config(admin_username=self.ADMIN,
-                     admin_apikey=self.APIKEY)
-        new.put()
-
         ndb.get_context().clear_cache()
 
     def tearDown(self):
@@ -34,8 +30,11 @@ class UserTest(unittest.TestCase):
         res = self.config()
         data = json.loads(res.data)
 
-        self.assertEqual('admin', data['admin_username'])
-        self.assertEqual('123456789', data['admin_apikey'])
+        self.assertEqual(200, res.status_code)
+        self.assertEqual({
+            'admin_username': None,
+            'admin_apikey': None
+        }, data)
 
     def test_update_config(self):
         res = self.config(update='true',
@@ -49,17 +48,16 @@ class UserTest(unittest.TestCase):
 
         self.assertEqual(1, len(Config.query().fetch()))
 
-    def test_update_config_invalid(self):
-        # without update='true'
+    def test_update_config_without_update(self):
         res = self.config(admin_username='kat',
                           admin_apikey='123')
         data = json.loads(res.data)
 
         self.assertEqual(200, res.status_code)
-        self.assertEqual('admin', data['admin_username'])
-        self.assertEqual('123456789', data['admin_apikey'])
-
-        self.assertEqual(1, len(Config.query().fetch()))
+        self.assertEqual({
+            'admin_username': None,
+            'admin_apikey': None
+        }, data)
 
     def test_update_config_without_username(self):
         res = self.config(update='true',
@@ -69,8 +67,6 @@ class UserTest(unittest.TestCase):
         self.assertEqual(400, res.status_code)
         self.assertEqual('missing required parameters', data['error'])
 
-        self.assertEqual(1, len(Config.query().fetch()))
-
     def test_update_config_without_apikey(self):
         res = self.config(update='true',
                           admin_username='kat')
@@ -78,8 +74,6 @@ class UserTest(unittest.TestCase):
 
         self.assertEqual(400, res.status_code)
         self.assertEqual('missing required parameters', data['error'])
-
-        self.assertEqual(1, len(Config.query().fetch()))
 
 
 if __name__ == '__main__':
