@@ -1,6 +1,7 @@
 from app.api.sms.base_action import ThreeArgCommand
 from app.command.base import Action
 from app.model.farm import Farm
+from app.i18n import _
 
 
 class SellAction(Action):
@@ -13,13 +14,15 @@ class SellAction(Action):
         super(SellAction, self).__init__(command)
 
     def execute(self):
-        user = self.command.sms.user[0]
+        user = self.command.sms.user
         new = Farm(id=Farm.id(),
                    district_id=user.district_id,
                    action=self.CMD,
                    crop_name=self.command.sell,
                    quantity=self.command.amount)
         new.put()
+
+        return _('Sell command succeeded')
 
 
 class SellCommand(ThreeArgCommand):

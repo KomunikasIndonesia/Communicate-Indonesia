@@ -7,6 +7,7 @@ from google.appengine.ext import ndb, testbed
 from app.command.base import NoRouteError, MultipleRouteError
 from app.model.sms_request import SmsRequest
 from app.model.user import User
+from app.i18n import _
 
 
 class SmsTest(unittest.TestCase):
@@ -133,8 +134,9 @@ class SmsTest(unittest.TestCase):
         self.assertEqual(200, res.status_code)
         self.assertEqual('<?xml version="1.0" encoding="UTF-8"?>'
                          '<Response><Sms from="123456" to="+123">'
-                         'Unknown command'
-                         '</Sms></Response>', res.data)
+                         '{}'
+                         '</Sms></Response>'.format(_('Unknown command')),
+                         res.data)
 
     @patch('app.api.sms.main.dispatcher')
     def test_dispatcher_multiple_route_error(self, mock):
@@ -151,8 +153,9 @@ class SmsTest(unittest.TestCase):
         self.assertEqual(200, res.status_code)
         self.assertEqual('<?xml version="1.0" encoding="UTF-8"?>'
                          '<Response><Sms from="123456" to="+123">'
-                         'Unknown command'
-                         '</Sms></Response>', res.data)
+                         '{}'
+                         '</Sms></Response>'.format(_('Unknown command')),
+                         res.data)
 
 if __name__ == '__main__':
     unittest.main()

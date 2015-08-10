@@ -6,6 +6,8 @@ from app.api.sms import app
 from app.model.sms_request import SmsRequest
 from app.model.user import User
 from app.model.farm import Farm
+from app.i18n import _
+
 from google.appengine.ext import testbed
 
 
@@ -100,7 +102,8 @@ class PlantCommandTest(unittest.TestCase):
 
         for sms in all_sms:
             cmd = PlantCommand(sms)
-            PlantAction(cmd).execute()
+            res_msg = PlantAction(cmd).execute()
+            self.assertEqual(_('Plant command succeeded'), res_msg)
 
         all_data = Farm.query().fetch()
         self.assertEqual(4, len(all_data))

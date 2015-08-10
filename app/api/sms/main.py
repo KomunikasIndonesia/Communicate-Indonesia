@@ -43,9 +43,11 @@ def incoming_twilio_sms():
     sms.put()
 
     # load application data associated with the sms
-    sms.user = User.query(User.phone_number == sms.from_number).fetch()
-    if not sms.user:
+    user = User.query(User.phone_number == sms.from_number).fetch()
+    if not user:
         abort(400, 'The phone number {} does not belong to a user'.format(sms.from_number))
+
+    sms.user = user[0]
 
     response_twiml = twiml.Response()
     response_message = None
