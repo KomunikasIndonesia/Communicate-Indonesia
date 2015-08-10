@@ -1,13 +1,25 @@
 from app.api.sms.base_action import ThreeArgCommand
 from app.command.base import Action
+from app.model.farm import Farm
 
 
 class PlantAction(Action):
     """
     Execute a plant operation
     """
+    CMD = 'plant'
+
     def __init__(self, command):
         super(PlantAction, self).__init__(command)
+
+    def execute(self):
+        user = self.command.sms.user[0]
+        new = Farm(id=Farm.id(),
+                   district_id=user.district_id,
+                   action=self.CMD,
+                   crop_name=self.command.plant,
+                   quantity=self.command.amount)
+        new.put()
 
 
 class PlantCommand(ThreeArgCommand):
