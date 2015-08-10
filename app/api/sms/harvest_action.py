@@ -13,13 +13,13 @@ class HarvestAction(Action):
         super(HarvestAction, self).__init__(command)
 
     def execute(self):
-        for user in self.command.sms.user:
-            new = Farm(id=Farm.id(),
-                       district_id=user.district_id,
-                       action=self.CMD,
-                       crop_name=self.command.harvest,
-                       quantity=self.command.amount)
-            new.put()
+        user = self.command.sms.user[0]
+        new = Farm(id=Farm.id(),
+                   district_id=user.district_id,
+                   action=self.CMD,
+                   crop_name=self.command.harvest,
+                   quantity=self.command.amount)
+        new.put()
 
 
 class HarvestCommand(ThreeArgCommand):
