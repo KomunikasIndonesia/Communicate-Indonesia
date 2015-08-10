@@ -21,6 +21,11 @@ class i18n(object):
             # Command parameters
             'price':            'harga',
             'all':              'semua',
+            # Command output
+            'Plant command succeeded':      'Perintah tanam berhasil',
+            'Harvest command succeeded':    'Perintah panen berhasil',
+            'Sell command succeeded':       'Perintah jual berhasil',
+            'Unknown command':              'Perintah tidak dikenal',
             # Vegetable crops
             'rice':             'padi',
             'potato':           'kentang',
