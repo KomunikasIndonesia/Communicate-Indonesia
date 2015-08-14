@@ -27,3 +27,6 @@ class ThreeArgCommand(Command):
         if len(words) >= 3:
             self.args = [word.strip() for word in words[1:3]]
             self.message = ' '.join(words[3:])
+
+        if len(words) == 2:
+            self.args = [words[1].strip(), None]
