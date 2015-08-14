@@ -12,6 +12,9 @@ class i18n(object):
 
         dic['idn'] = {
             # Basic commands
+            'harvest':          'panen',
+            'plant':            'tanam',
+            'sell':             'jual',
             'harvest {} {}':    'panen {} {}',
             'plant {} {}':      'tanam {} {}',
             'sell {} {}':       'jual {} {}',
@@ -26,6 +29,8 @@ class i18n(object):
             'Harvest command succeeded':    'Perintah panen berhasil',
             'Sell command succeeded':       'Perintah jual berhasil',
             'Unknown command':              'Perintah tidak dikenal',
+            # Query district
+            'Total {} in {} ({} {}):':      'Total {} di {} ({} {}):',
             # Vegetable crops
             'rice':             'padi',
             'potato':           'kentang',
@@ -50,7 +55,20 @@ class i18n(object):
             'milkfish':         'bandeng',
             'catfish':          'lele',
             'squid':            'cumicumi',
-            'clam':             'kerang'
+            'clam':             'kerang',
+            # Month
+            'January':          'Januari',
+            'February':         'Februari',
+            'March':            'Maret',
+            'April':            'April',
+            'May':              'Mei',
+            'June':             'Juni',
+            'July':             'Juli',
+            'August':           'Agustus',
+            'September':        'September',
+            'October':          'Oktober',
+            'November':         'November',
+            'December':         'Desember'
         }
 
         return dic[domain] if domain in dic else {}
