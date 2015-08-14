@@ -11,8 +11,6 @@ class QueryAction(Action):
     """
     Execute a query operation.
     """
-    CMD = 'look'
-
     FILTER = {
         'panen': 'harvest',
         'tanam': 'plant',
