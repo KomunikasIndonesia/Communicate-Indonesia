@@ -35,12 +35,7 @@ class QueryAction(Action):
                                    Farm.district_id == district_id))
         crops = query.order(-Farm.ts_updated).fetch(self.LIMIT)
 
-        month = crops[0].ts_updated.strftime('%B')
-        year = crops[0].ts_updated.year
-
-        response = _('Total {} in {} ({} {}):').format(_(filter),
-                                                       place.title(),
-                                                       _(month), year)
+        response = _('Total {} in {}:').format(_(filter), place.title())
         for crop in crops:
             response += '\n{} {}'.format(_(crop.crop_name).title(),
                                          crop.quantity)

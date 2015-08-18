@@ -30,7 +30,7 @@ class i18n(object):
             'Sell command succeeded':       'Perintah jual berhasil',
             'Unknown command':              'Perintah tidak dikenal',
             # Query district
-            'Total {} in {} ({} {}):':      'Total {} di {} ({} {}):',
+            'Total {} in {}:':              'Total {} di {}:',
             # Vegetable crops
             'rice':             'padi',
             'potato':           'kentang',

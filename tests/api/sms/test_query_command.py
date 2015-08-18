@@ -1,5 +1,4 @@
 import unittest
-from datetime import datetime
 from mock import patch
 
 from app.api.sms.query_action import QueryCommand, QueryAction
@@ -8,7 +7,6 @@ from app.model.sms_request import SmsRequest
 from app.model.user import User
 from app.model.district import District
 from app.model.farm import Farm
-from app.i18n import _
 
 from google.appengine.ext import testbed, ndb
 
@@ -47,8 +45,6 @@ class QueryCommandTest(unittest.TestCase):
             Farm(district_id='sul123', action='sell',
                  crop_name='milkfish', quantity=43),
         ])
-
-        self.month = datetime.now().strftime('%B')
 
     def test_query_command(self):
         valid_messages = [
@@ -141,10 +137,9 @@ class QueryCommandTest(unittest.TestCase):
             cmd = QueryCommand(self.sms)
             res_msg = QueryAction(cmd).execute()
 
-            self.assertEqual('Total panen di Lompoko ({} 2015):'
+            self.assertEqual('Total panen di Lompoko:'
                              '\nWortel 10'
-                             '\nKentang 20'.format(_(self.month)),
-                             res_msg)
+                             '\nKentang 20', res_msg)
 
     @patch('app.api.sms.main.dispatcher')
     def test_district_plant(self, mock):
@@ -164,9 +159,8 @@ class QueryCommandTest(unittest.TestCase):
             cmd = QueryCommand(self.sms)
             res_msg = QueryAction(cmd).execute()
 
-            self.assertEqual('Total tanam di Lompoko ({} 2015):'
-                             '\nPadi 75'.format(_(self.month)),
-                             res_msg)
+            self.assertEqual('Total tanam di Lompoko:'
+                             '\nPadi 75', res_msg)
 
     @patch('app.api.sms.main.dispatcher')
     def test_district_sell(self, mock):
@@ -186,6 +180,5 @@ class QueryCommandTest(unittest.TestCase):
             cmd = QueryCommand(self.sms)
             res_msg = QueryAction(cmd).execute()
 
-            self.assertEqual('Total jual di Lompoko ({} 2015):'
-                             '\nBandeng 43'.format(_(self.month)),
-                             res_msg)
+            self.assertEqual('Total jual di Lompoko:'
+                             '\nBandeng 43', res_msg)
