@@ -35,6 +35,9 @@ class QueryAction(Action):
                                    Farm.district_id == district_id))
         crops = query.order(-Farm.ts_updated).fetch(self.LIMIT)
 
+        if len(crops) == 0:
+            return _('{} data is none').format(_(filter))
+
         response = _('Total {} in {}:').format(_(filter), place.title())
         for crop in crops:
             response += '\n{} {}'.format(_(crop.crop_name).title(),

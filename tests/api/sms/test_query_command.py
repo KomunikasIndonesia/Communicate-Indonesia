@@ -151,7 +151,7 @@ class QueryCommandTest(unittest.TestCase):
 
         valid_messages = [
             'look lompoko plant',
-            'look tanam lompoko'
+            'lihat tanam lompoko'
         ]
 
         for body in valid_messages:
@@ -172,7 +172,7 @@ class QueryCommandTest(unittest.TestCase):
 
         valid_messages = [
             'look lompoko sell',
-            'look jual lompoko'
+            'lihat jual lompoko'
         ]
 
         for body in valid_messages:
@@ -182,3 +182,22 @@ class QueryCommandTest(unittest.TestCase):
 
             self.assertEqual('Total jual di Lompoko:'
                              '\nBandeng 43', res_msg)
+
+    @patch('app.api.sms.main.dispatcher')
+    def test_empty(self, mock):
+        mock.dispatch.return_value = None
+
+        ndb.delete_multi(Farm.query().fetch(keys_only=True))
+        self.assertEqual(0, len(Farm.query().fetch()))
+
+        valid_messages = [
+            'look lompoko',
+            'lihat lompoko'
+        ]
+
+        for body in valid_messages:
+            self.sms.body = body
+            cmd = QueryCommand(self.sms)
+            res_msg = QueryAction(cmd).execute()
+
+            self.assertEqual('Data panen tidak ada', res_msg)
