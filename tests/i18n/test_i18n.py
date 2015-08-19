@@ -36,6 +36,3 @@ class i18test(unittest.TestCase):
         self.assertEqual(_('rice'), 'rice')
         self.assertEqual(_('milkfish'), 'milkfish')
         self.assertEqual(_('banana'), 'banana')
-
-    def test_coba(self):
-        self.assertEqual(_('potato'), 'kentang')
