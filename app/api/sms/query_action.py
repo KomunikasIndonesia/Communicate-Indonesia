@@ -17,7 +17,7 @@ class QueryAction(Action):
         'jual': 'sell'
     }
 
-    LIMIT = 5
+    LIMIT = 8
 
     def __init__(self, command):
         super(QueryAction, self).__init__(command)

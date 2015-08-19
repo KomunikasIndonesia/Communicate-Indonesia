@@ -191,13 +191,42 @@ class QueryCommandTest(unittest.TestCase):
         self.assertEqual(0, len(Farm.query().fetch()))
 
         valid_messages = [
-            'look lompoko',
-            'lihat lompoko'
+            {
+                'filter': ['harvest', 'panen'],
+                'msg': [
+                    'look lompoko harvest',
+                    'look harvest lompoko',
+                    'look lompoko',  # default harvest
+                    'lihat lompoko panen',
+                    'lihat panen lompoko',
+                    'lihat lompoko'  # default harvest
+                ]
+            },
+            {
+                'filter': ['plant', 'tanam'],
+                'msg': [
+                    'look lompoko plant',
+                    'look plant lompoko',
+                    'lihat lompoko tanam',
+                    'lihat tanam lompoko'
+                ]
+            },
+            {
+                'filter': ['sell', 'jual'],
+                'msg': [
+                    'look lompoko sell',
+                    'look sell lompoko',
+                    'lihat lompoko jual',
+                    'lihat jual lompoko'
+                ]
+            }
         ]
 
-        for body in valid_messages:
-            self.sms.body = body
-            cmd = QueryCommand(self.sms)
-            res_msg = QueryAction(cmd).execute()
+        for valid in valid_messages:
+            for msg in valid['msg']:
+                self.sms.body = msg
+                cmd = QueryCommand(self.sms)
+                res_msg = QueryAction(cmd).execute()
 
-            self.assertEqual('Data panen tidak ada', res_msg)
+                self.assertEqual('Data {} tidak ada'.format(valid['filter'][1]),
+                                 res_msg)

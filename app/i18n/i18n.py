@@ -50,6 +50,7 @@ class i18n(object):
             'strawberry':       'stroberi',
             'banana':           'pisang',
             'pineapple':        'nanas',
+            'mango':            'mangga',
             # Fish farmers
             'shrimp':           'udang',
             'fish':             'ikan',
