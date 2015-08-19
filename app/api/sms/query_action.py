@@ -17,7 +17,7 @@ class QueryAction(Action):
         'jual': 'sell'
     }
 
-    LIMIT = 5
+    LIMIT = 8
 
     def __init__(self, command):
         super(QueryAction, self).__init__(command)
@@ -35,12 +35,10 @@ class QueryAction(Action):
                                    Farm.district_id == district_id))
         crops = query.order(-Farm.ts_updated).fetch(self.LIMIT)
 
-        month = crops[0].ts_updated.strftime('%B')
-        year = crops[0].ts_updated.year
+        if len(crops) == 0:
+            return _('{} data is none').format(_(filter))
 
-        response = _('Total {} in {} ({} {}):').format(_(filter),
-                                                       place.title(),
-                                                       _(month), year)
+        response = _('Total {} in {}:').format(_(filter), place.title())
         for crop in crops:
             response += '\n{} {}'.format(_(crop.crop_name).title(),
                                          crop.quantity)

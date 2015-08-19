@@ -30,7 +30,8 @@ class i18n(object):
             'Sell command succeeded':       'Perintah jual berhasil',
             'Unknown command':              'Perintah tidak dikenal',
             # Query district
-            'Total {} in {} ({} {}):':      'Total {} di {} ({} {}):',
+            'Total {} in {}:':              'Total {} di {}:',
+            '{} data is none':              'Data {} tidak ada',
             # Vegetable crops
             'rice':             'padi',
             'potato':           'kentang',
@@ -49,6 +50,7 @@ class i18n(object):
             'strawberry':       'stroberi',
             'banana':           'pisang',
             'pineapple':        'nanas',
+            'mango':            'mangga',
             # Fish farmers
             'shrimp':           'udang',
             'fish':             'ikan',
