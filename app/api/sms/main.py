@@ -4,6 +4,9 @@ from flask import Flask, request, abort
 from twilio import twiml
 
 from app.api.sms.plant_action import PlantCommand, PlantAction
+from app.api.sms.harvest_action import HarvestCommand, HarvestAction
+from app.api.sms.sell_action import SellCommand, SellAction
+from app.api.sms.query_action import QueryCommand, QueryAction
 from app.command.base import Dispatcher, NoRouteError, MultipleRouteError
 from app.i18n import _
 from app.model.sms_request import SmsRequest
@@ -17,6 +20,9 @@ enable_json_error(app)
 
 dispatcher = Dispatcher()
 dispatcher.route(PlantCommand, PlantAction)
+dispatcher.route(HarvestCommand, HarvestAction)
+dispatcher.route(SellCommand, SellAction)
+dispatcher.route(QueryCommand, QueryAction)
 
 
 @app.route('/v1/sms/twilio', methods=['POST'])
