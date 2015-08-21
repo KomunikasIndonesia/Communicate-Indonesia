@@ -1,7 +1,9 @@
 from app.api.sms.base_action import ThreeArgCommand
 from app.command.base import Action
 from app.model.farm import Farm
+
 from app.i18n import _
+from google.appengine.ext import ndb
 
 
 class HarvestAction(Action):
@@ -14,13 +16,26 @@ class HarvestAction(Action):
         super(HarvestAction, self).__init__(command)
 
     def execute(self):
-        user = self.command.sms.user
+        cmd = self.command
+        user = cmd.sms.user
+
         new = Farm(id=Farm.id(),
                    district_id=user.district_id,
                    action=self.CMD,
-                   crop_name=self.command.harvest,
-                   quantity=self.command.amount)
+                   crop_name=cmd.harvest,
+                   quantity=cmd.amount)
         new.put()
+
+        query = Farm.query(ndb.AND(Farm.district_id == user.district_id,
+                                   Farm.crop_name == cmd.harvest,
+                                   Farm.action == 'plant'))
+        plant = query.fetch()
+
+        if plant:
+            plant = plant[0]
+            update = plant.key.get()
+            update.quantity = plant.quantity - cmd.amount
+            update.put()
 
         return _('Harvest command succeeded')
 

@@ -89,4 +89,6 @@ class Dispatcher(object):
             raise MultipleRouteError('multiple routes were matched:\n{}',
                                      '\n'.join(names))
 
+        command = valid_routes[0]['command_class'](data)
+
         return valid_routes[0]['action_class'](command).execute()
