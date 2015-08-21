@@ -1,7 +1,9 @@
 from app.api.sms.base_action import ThreeArgCommand
 from app.command.base import Action
 from app.model.farm import Farm
+
 from app.i18n import _
+from google.appengine.ext import ndb
 
 
 class PlantAction(Action):
@@ -14,13 +16,26 @@ class PlantAction(Action):
         super(PlantAction, self).__init__(command)
 
     def execute(self):
-        user = self.command.sms.user
-        new = Farm(id=Farm.id(),
-                   district_id=user.district_id,
-                   action=self.CMD,
-                   crop_name=self.command.plant,
-                   quantity=self.command.amount)
-        new.put()
+        cmd = self.command
+        user = cmd.sms.user
+
+        query = Farm.query(ndb.AND(Farm.district_id == user.district_id,
+                                   Farm.crop_name == cmd.plant,
+                                   Farm.action == 'plant'))
+        plant = query.fetch()
+
+        if plant:
+            plant = plant[0]
+            update = plant.key.get()
+            update.quantity = plant.quantity + cmd.amount
+            update.put()
+        else:
+            new = Farm(id=Farm.id(),
+                       district_id=user.district_id,
+                       action=self.CMD,
+                       crop_name=cmd.plant,
+                       quantity=cmd.amount)
+            new.put()
 
         return _('Plant command succeeded')
 

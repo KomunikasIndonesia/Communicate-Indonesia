@@ -106,10 +106,10 @@ class PlantCommandTest(unittest.TestCase):
             self.assertEqual(_('Plant command succeeded'), res_msg)
 
         all_data = Farm.query().fetch()
-        self.assertEqual(4, len(all_data))
+        self.assertEqual(1, len(all_data))
 
         for data in all_data:
             self.assertEqual('plant', data.action)
             self.assertEqual('potato', data.crop_name)
-            self.assertEqual(20, data.quantity)
+            self.assertEqual(80, data.quantity)  # aggregated
             self.assertEqual('sul123', data.district_id)
