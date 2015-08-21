@@ -116,7 +116,7 @@ class CombinedSmsTest(unittest.TestCase):
         res_msg = self.execute(QueryCommand(sms), QueryAction)
 
         self.assertEqual('Total tanam di Sumatra:'
-                         '\nKentang 5', res_msg)
+                         '\nKentang 4', res_msg)
 
         self.send('look sumatra')
         sms = SmsRequest.query().fetch()[3]
@@ -213,3 +213,29 @@ class CombinedSmsTest(unittest.TestCase):
         res_msg = self.execute(QueryCommand(sms), QueryAction)
 
         self.assertEqual('Data tanam tidak ada', res_msg)
+
+    @patch('app.api.sms.main.dispatcher')
+    def test_multi_different_harvest(self, mock):
+        mock.dispatch.return_value = None
+
+        self.send('plant 5 potato')
+        sms = SmsRequest.query().fetch()[0]
+        self.execute(PlantCommand(sms), PlantAction)
+
+        self.send('harvest 3 carrot')
+        sms = SmsRequest.query().fetch()[1]
+        self.execute(HarvestCommand(sms), HarvestAction)
+
+        self.send('look plant sumatra')
+        sms = SmsRequest.query().fetch()[2]
+        res_msg = self.execute(QueryCommand(sms), QueryAction)
+
+        self.assertEqual('Total tanam di Sumatra:'
+                         '\nKentang 5', res_msg)
+
+        self.send('look sumatra')
+        sms = SmsRequest.query().fetch()[3]
+        res_msg = self.execute(QueryCommand(sms), QueryAction)
+
+        self.assertEqual('Total panen di Sumatra:'
+                         '\nWortel 3', res_msg)
