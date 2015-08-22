@@ -35,22 +35,19 @@ class BroadcastCommand(ThreeArgCommand):
         'kirim'       # in
     ]
 
+    ROLE_FARMER = 'farmer'
+
     def __init__(self, sms):
         super(BroadcastCommand, self).__init__(sms)
-        self.to = None
+        self.to = self.args[0]
         self.msg = None
 
-        if sms.user.role == 'hutan_biru':
-            self.to = self.args[0]
+        if self.args[1]:
             self.msg = self.args[1] + self.message
 
-        if sms.user.role == 'farmers':
-            if self.args[1]:
-                self.to = self.args[0]
-                self.msg = self.args[1] + self.message
-            else:
-                self.to = sms.user.district_id
-                self.msg = self.args[0]
+        if sms.user.role == self.ROLE_FARMER and not self.args[1]:
+            self.to = sms.user.district_id
+            self.msg = self.args[0]
 
     def valid(self):
         valid_cmd = any([self.cmd == cmd for cmd in self.VALID_CMDS])
