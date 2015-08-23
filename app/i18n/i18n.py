@@ -24,11 +24,14 @@ class i18n(object):
             # Command parameters
             'price':            'harga',
             'all':              'semua',
+            'everyone':         'semua',
             # Command output
             'Plant command succeeded':      'Perintah tanam berhasil',
             'Harvest command succeeded':    'Perintah panen berhasil',
             'Sell command succeeded':       'Perintah jual berhasil',
             'Unknown command':              'Perintah tidak dikenal',
+            'Message sent to {}':           'Pesan berhasil dikirim ke {}',
+            'Message delivery failed':      'Pesan gagal dikirim',
             # Query district
             'Total {} in {}:':              'Total {} di {}:',
             '{} data is none':              'Data {} tidak ada',

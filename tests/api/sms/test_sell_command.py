@@ -57,7 +57,7 @@ class SellCommandTest(unittest.TestCase):
     def test_sell_command_without_amount(self):
         invalid_messages = [
             'sell potato',
-            'sell potato'
+            'jual potato'
         ]
 
         for body in invalid_messages:
