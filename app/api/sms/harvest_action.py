@@ -33,9 +33,8 @@ class HarvestAction(Action):
 
         if plant:
             plant = plant[0]
-            update = plant.key.get()
-            update.quantity = plant.quantity - cmd.amount
-            update.put()
+            plant.quantity -= cmd.amount
+            plant.put()
 
         return _('Harvest command succeeded')
 
