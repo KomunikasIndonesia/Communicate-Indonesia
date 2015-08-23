@@ -290,7 +290,8 @@ class BroadcastCommandTest(unittest.TestCase):
         cmd = BroadcastCommand(self.sms)
         res_msg = BroadcastAction(cmd).execute()
 
-        # ignore district, still send to user's registered district
+        # ignore maros district although exist in db
+        # still send to user's registered district (lompoko)
         self.assertEqual('Pesan berhasil dikirim ke lompoko', _(res_msg))
 
         tasks = self.taskqueue_stub.get_filtered_tasks()
@@ -301,7 +302,7 @@ class BroadcastCommandTest(unittest.TestCase):
             res = self.app.post(task.url, data=data)  # execute task
             r = json.loads(res.data)
 
-            # district is considered as message
+            # maros district is considered as message
             self.assertEqual(r['body'], 'maros did better than us, revenge!')
 
             # check if farmer in lompoko only
