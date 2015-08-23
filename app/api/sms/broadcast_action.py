@@ -92,9 +92,9 @@ class BroadcastCommand(ThreeArgCommand):
                 self.msg = self.args[1]
 
             if self.args[1] and district:
+                self.to_id = district[0].key.id()
                 self.to = self.args[0]
                 self.msg = self.args[1]
-                self.to_id = district[0].key.id()
 
         if sms.user.role == User.ROLE_FARMER:
             self.to_id = sms.user.district_id
