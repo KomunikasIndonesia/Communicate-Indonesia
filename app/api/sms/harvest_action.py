@@ -33,7 +33,7 @@ class HarvestAction(Action):
 
         if plant:
             plant = plant[0]
-            plant.quantity = plant.quantity - cmd.amount
+            plant.quantity -= cmd.amount
             plant.put()
 
         return _('Harvest command succeeded')
