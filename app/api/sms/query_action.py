@@ -11,11 +11,6 @@ class QueryAction(Action):
     """
     Execute a query operation.
     """
-    FILTER = {
-        'panen': 'harvest',
-        'tanam': 'plant',
-        'jual': 'sell'
-    }
 
     LIMIT = 8
 
@@ -28,14 +23,12 @@ class QueryAction(Action):
         district_id = district.key.id()
 
         filter = self.command.filter
-        if filter in self.FILTER:
-            filter = self.FILTER[self.command.filter]
 
         query = Farm.query(ndb.AND(Farm.action == filter,
                                    Farm.district_id == district_id))
         crops = query.order(-Farm.ts_updated).fetch(self.LIMIT)
 
-        if len(crops) == 0:
+        if not crops:
             return _('{} data is none').format(_(filter))
 
         response = _('Total {} in {}:').format(_(filter), place.title())
@@ -70,6 +63,12 @@ class QueryCommand(ThreeArgCommand):
         'sell', 'jual'
     ]
 
+    FILTER_MAPPING = {
+        'panen': 'harvest',
+        'tanam': 'plant',
+        'jual': 'sell'
+    }
+
     DEFAULT = 'harvest'
 
     def __init__(self, sms):
@@ -89,6 +88,9 @@ class QueryCommand(ThreeArgCommand):
         if self.args[1] in self.VALID_FILTER:
             self.district = self.args[0]
             self.filter = self.args[1]
+
+        if self.filter in self.FILTER_MAPPING:
+            self.filter = self.FILTER_MAPPING[self.filter]
 
     def valid(self):
         valid_cmd = any([self.cmd == cmd for cmd in self.VALID_CMDS])

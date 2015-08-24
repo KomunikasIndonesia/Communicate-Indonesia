@@ -12,6 +12,7 @@ from app.i18n import _
 from google.appengine.ext import testbed, ndb
 
 
+@unittest.skip('need to be refactored')
 class BroadcastCommandTest(unittest.TestCase):
 
     def setUp(self):
