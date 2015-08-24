@@ -16,26 +16,24 @@ class PlantAction(Action):
         super(PlantAction, self).__init__(command)
 
     def execute(self):
+        """
+        Update plant totals
+        """
         cmd = self.command
         user = cmd.sms.user
 
-        query = Farm.query(ndb.AND(Farm.district_id == user.district_id,
+        plant = Farm.query(ndb.AND(Farm.district_id == user.district_id,
                                    Farm.crop_name == cmd.plant,
-                                   Farm.action == 'plant'))
-        plant = query.fetch()
+                                   Farm.action == 'plant')).get()
+        if not plant:
+            plant = Farm(id=Farm.id(),
+                         district_id=user.district_id,
+                         action=self.CMD,
+                         crop_name=cmd.plant,
+                         quantity=0)
 
-        if plant:
-            plant = plant[0]
-            update = plant.key.get()
-            update.quantity = plant.quantity + cmd.amount
-            update.put()
-        else:
-            new = Farm(id=Farm.id(),
-                       district_id=user.district_id,
-                       action=self.CMD,
-                       crop_name=cmd.plant,
-                       quantity=cmd.amount)
-            new.put()
+        plant.quantity += cmd.amount
+        plant.put()
 
         return _('Plant command succeeded')
 
