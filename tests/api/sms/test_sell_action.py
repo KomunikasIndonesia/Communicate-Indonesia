@@ -21,7 +21,7 @@ class SellActionTest(unittest.TestCase):
                              district_id='sul123')
         self.sms.body = ''
 
-    def _harvest(self, plant, amount):
+    def _sell(self, plant, amount):
         cmd = SellCommand(self.sms)
         cmd.plant = plant
         cmd.amount = amount
