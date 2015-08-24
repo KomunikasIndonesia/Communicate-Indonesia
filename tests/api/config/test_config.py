@@ -33,18 +33,27 @@ class UserTest(unittest.TestCase):
         self.assertEqual(200, res.status_code)
         self.assertEqual({
             'admin_username': None,
-            'admin_apikey': None
+            'admin_apikey': None,
+            'twilio_account_sid': None,
+            'twilio_auth_token': None,
+            'twilio_phone_number': None
         }, data)
 
     def test_update_config(self):
         res = self.config(update='true',
                           admin_username='kat',
-                          admin_apikey='123')
+                          admin_apikey='123',
+                          twilio_account_sid='sid',
+                          twilio_auth_token='token',
+                          twilio_phone_number='123')
         data = json.loads(res.data)
 
         self.assertEqual(200, res.status_code)
         self.assertEqual('kat', data['admin_username'])
         self.assertEqual('123', data['admin_apikey'])
+        self.assertEqual('sid', data['twilio_account_sid'])
+        self.assertEqual('token', data['twilio_auth_token'])
+        self.assertEqual('123', data['twilio_phone_number'])
 
         self.assertEqual(1, len(Config.query().fetch()))
 
@@ -56,24 +65,11 @@ class UserTest(unittest.TestCase):
         self.assertEqual(200, res.status_code)
         self.assertEqual({
             'admin_username': None,
-            'admin_apikey': None
+            'admin_apikey': None,
+            'twilio_account_sid': None,
+            'twilio_auth_token': None,
+            'twilio_phone_number': None
         }, data)
-
-    def test_update_config_without_username(self):
-        res = self.config(update='true',
-                          admin_apikey='123')
-        data = json.loads(res.data)
-
-        self.assertEqual(400, res.status_code)
-        self.assertEqual('missing required parameters', data['error'])
-
-    def test_update_config_without_apikey(self):
-        res = self.config(update='true',
-                          admin_username='kat')
-        data = json.loads(res.data)
-
-        self.assertEqual(400, res.status_code)
-        self.assertEqual('missing required parameters', data['error'])
 
 
 if __name__ == '__main__':

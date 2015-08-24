@@ -5,6 +5,7 @@ from mock import patch
 from app.api.sms import app
 from google.appengine.ext import ndb, testbed
 from app.command.base import NoRouteError, MultipleRouteError
+from app.model.config import Config
 from app.model.sms_request import SmsRequest
 from app.model.user import User
 from app.i18n import _
@@ -25,6 +26,8 @@ class SmsTest(unittest.TestCase):
         self.user = User(role='farmer', phone_number='+123', first_name='name')
         self.user.put()
 
+        Config(id='test', twilio_phone_number='+321').put()
+
     def tearDown(self):
         self.testbed.deactivate()
 
@@ -41,7 +44,7 @@ class SmsTest(unittest.TestCase):
 
         self.assertEqual(200, res.status_code)
         self.assertEqual('<?xml version="1.0" encoding="UTF-8"?>'
-                         '<Response><Sms from="123456" to="+123">'
+                         '<Response><Sms from="+321" to="+123">'
                          'response message'
                          '</Sms></Response>', res.data)
 
@@ -133,7 +136,7 @@ class SmsTest(unittest.TestCase):
         # should return an sms response to the user
         self.assertEqual(200, res.status_code)
         self.assertEqual('<?xml version="1.0" encoding="UTF-8"?>'
-                         '<Response><Sms from="123456" to="+123">'
+                         '<Response><Sms from="+321" to="+123">'
                          '{}'
                          '</Sms></Response>'.format(_('Unknown command')),
                          res.data)
@@ -152,7 +155,7 @@ class SmsTest(unittest.TestCase):
         # should return an sms response to the user
         self.assertEqual(200, res.status_code)
         self.assertEqual('<?xml version="1.0" encoding="UTF-8"?>'
-                         '<Response><Sms from="123456" to="+123">'
+                         '<Response><Sms from="+321" to="+123">'
                          '{}'
                          '</Sms></Response>'.format(_('Unknown command')),
                          res.data)

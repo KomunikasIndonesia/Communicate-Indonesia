@@ -10,6 +10,7 @@ from app.api.sms.query_action import QueryCommand, QueryAction
 from app.api.sms.broadcast_action import BroadcastCommand, BroadcastAction
 from app.command.base import Dispatcher, NoRouteError, MultipleRouteError
 from app.i18n import _
+from app.model.config import Config
 from app.model.sms_request import SmsRequest
 from app.model.user import User
 from app.util.flask_common import enable_json_error
@@ -67,8 +68,9 @@ def incoming_twilio_sms():
         response_message = _('Unknown command')
 
     if response_message:
+        config = Config.query().get()
         response_twiml.sms(to=sms.from_number,
-                           sender='123456',  # TODO - add this to configuration
+                           sender=config.twilio_phone_number,
                            msg=response_message)
 
     # update sms processed state

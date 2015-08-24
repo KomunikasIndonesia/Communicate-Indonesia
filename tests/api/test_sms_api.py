@@ -1,6 +1,7 @@
 import unittest
 
 from app.api.sms import app
+from app.model.config import Config
 from app.model.user import User
 from app.model.district import District
 
@@ -20,8 +21,9 @@ class SmsAPITest(unittest.TestCase):
         self.user = User(role='farmer', phone_number='6072809193',
                          first_name='Kat', district_id='sum123')
         self.user.put()
-        district = District(id='sum123', name='sumatra')
-        district.put()
+
+        District(id='sum123', name='sumatra').put()
+        Config(id='test', twilio_phone_number='+321').put()
 
     def tearDown(self):
         self.testbed.deactivate()

@@ -22,3 +22,8 @@ This project is currently configured for linux
 - make server : run appengine dev app server
 - make test : run tests
 - make flake8 : lint source code
+
+## Configuring config
+- Go to http://localhost:8080/v1/config to see configuration
+- To set params go to http://localhost:8080/v1/config?update=true&p1=v1&p2=v2 where px and vx are config param and values.
+Example http://localhost:8080/v1/config?update=true&admin_username=blah&admin_key=key

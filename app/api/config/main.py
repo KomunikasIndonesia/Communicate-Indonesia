@@ -1,4 +1,4 @@
-from flask import Flask, request, abort
+from flask import Flask, request
 from app.model.config import Config
 from app.util.flask_common import (
     jsonify,
@@ -23,12 +23,21 @@ def config():
     if update == 'true':
         admin_username = request.args.get('admin_username')
         admin_apikey = request.args.get('admin_apikey')
+        twilio_account_sid = request.args.get('twilio_account_sid')
+        twilio_auth_token = request.args.get('twilio_auth_token')
+        twilio_phone_number = request.args.get('twilio_phone_number')
 
-        if not admin_username or not admin_apikey:
-            abort(400, 'missing required parameters')
+        if admin_username:
+            config.admin_username = admin_username
+        if admin_apikey:
+            config.admin_apikey = admin_apikey
+        if twilio_account_sid:
+            config.twilio_account_sid = twilio_account_sid
+        if twilio_auth_token:
+            config.twilio_auth_token = twilio_auth_token
+        if twilio_phone_number:
+            config.twilio_phone_number = twilio_phone_number
 
-        config.admin_username = admin_username
-        config.admin_apikey = admin_apikey
         config.put()
 
     return config.toJson()
