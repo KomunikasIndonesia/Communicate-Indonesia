@@ -60,7 +60,7 @@ class HarvestActionTest(unittest.TestCase):
         self.assertEqual('potato', data.crop_name)
         self.assertEqual(3, data.quantity)
 
-    def test_should_store_harvest_for_different_plants(self):
+    def test_should_store_harvest_for_different_plants_independently(self):
         HarvestAction(self._harvest('potato', 2)).execute()
         HarvestAction(self._harvest('carrot', 3)).execute()
 
