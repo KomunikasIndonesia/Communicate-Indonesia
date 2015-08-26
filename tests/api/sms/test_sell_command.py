@@ -20,7 +20,7 @@ class SellCommandTest(unittest.TestCase):
             cmd = SellCommand(sms)
             self.assertTrue(cmd.valid())
             self.assertEqual(20, cmd.amount)
-            self.assertEqual('potato', cmd.sell)
+            self.assertEqual('potato', cmd.plant)
 
     def test_sell_command_without_sell(self):
         invalid_messages = [

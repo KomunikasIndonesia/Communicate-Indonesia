@@ -78,17 +78,16 @@ class SmsAPITest(unittest.TestCase):
                         '\nKentang 3' in res.data)
 
         self.send('harvest 1 potato')
-        self.send('sell 1 potato')
 
         res = self.send('look harvest sumatra')
         self.assertTrue('Total panen di Sumatra:'
                         '\nKentang 3' in res.data)
 
+        self.send('sell 1 potato')
+
         res = self.send('look sumatra')
-        # TODO - the sell action should subtract from harvested total
-        #      - Fix the bug in sell action for this assertion to work
-        # self.assertTrue('Total panen di Sumatra:'
-        #                '\nKentang 2' in res.data)
+        self.assertTrue('Total panen di Sumatra:'
+                        '\nKentang 2' in res.data)
 
         res = self.send('look sumatra sell')
         self.assertTrue('Total jual di Sumatra:'
