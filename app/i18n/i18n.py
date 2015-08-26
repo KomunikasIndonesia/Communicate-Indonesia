@@ -27,7 +27,9 @@ class i18n(object):
             'everyone':         'semua',
             # Command output
             'Plant command succeeded':      'Perintah tanam berhasil',
+            'Not enough {} planted':        'Tanam belum mencukupi',
             'Harvest command succeeded':    'Perintah panen berhasil',
+            'Not enough {} harvested':      'Panen belum mencukupi',
             'Sell command succeeded':       'Perintah jual berhasil',
             'Unknown command':              'Perintah tidak dikenal',
             'Message sent to {}':           'Pesan berhasil dikirim ke {}',
