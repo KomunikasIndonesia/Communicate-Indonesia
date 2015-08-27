@@ -23,7 +23,7 @@ def insert():
     role = request.form.get('role')
     district_id = request.form.get('district_id', None)
 
-    if role == User.ROLE_FARMER:
+    if role == User.ROLE_FARMER or role == User.ROLE_DISTRICT_LEADER:
         if not district_id:
             abort(400, 'district_id is required')
 
@@ -39,7 +39,7 @@ def insert():
                last_name=request.form.get('last_name', None))
 
     new.put()
-    return new.toJson()
+    return new.to_dict()
 
 
 @app.route('/v1/users', methods=['GET'])
@@ -55,7 +55,7 @@ def fetch():
     users = query.order(-User.ts_created).fetch()
 
     return {
-        'users': [u.toJson() for u in users] if users else []
+        'users': [u.to_dict() for u in users] if users else []
     }
 
 
@@ -67,4 +67,4 @@ def retrieve(user_id):
     if not user:
         abort(404, 'this resource does not exist')
 
-    return user.toJson()
+    return user.to_dict()

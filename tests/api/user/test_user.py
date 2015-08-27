@@ -21,7 +21,9 @@ class UserTest(unittest.TestCase):
         self.testbed.init_datastore_v3_stub()
         self.testbed.init_memcache_stub()
 
-        self.district = District(id='district_id', name='sulawesi')
+        self.district = District(id='district_id',
+                                 name='Sulawesi',
+                                 slug='sulawesi')
         self.district.put()
 
         self.config = Config(admin_username=self.ADMIN,

@@ -29,11 +29,12 @@ class DistrictTest(unittest.TestCase):
         return self.app.get('/v1/districts/' + district_id, query_string=kwargs)
 
     def test_insert_district(self):
-        res = self.insert(name='sulawesi')
+        res = self.insert(name='Sulawesi')
         data = json.loads(res.data)
 
         self.assertEqual(200, res.status_code)
-        self.assertEqual('sulawesi', data['name'])
+        self.assertEqual('Sulawesi', data['name'])
+        self.assertEqual('sulawesi', data['slug'])
         self.assertIsNotNone(data['ts_created'])
         self.assertIsNotNone(data['ts_updated'])
 
@@ -45,7 +46,7 @@ class DistrictTest(unittest.TestCase):
         self.assertEqual('name is required', data['error'])
 
     def test_list_one_district(self):
-        self.insert(name='sulawesi')
+        self.insert(name='Sulawesi')
         res = self.list()
         data = json.loads(res.data)
 
@@ -53,7 +54,8 @@ class DistrictTest(unittest.TestCase):
         self.assertEqual(1, len(data['districts']))
 
         district = data['districts'][0]
-        self.assertEqual('sulawesi', district['name'])
+        self.assertEqual('Sulawesi', district['name'])
+        self.assertEqual('sulawesi', district['slug'])
         self.assertIsNotNone(district['ts_created'])
         self.assertIsNotNone(district['ts_updated'])
 
@@ -79,14 +81,14 @@ class DistrictTest(unittest.TestCase):
 
     def test_list_should_filter_by_name(self):
         self.insert(name='sulawesi')
-        self.insert(name='new york')
+        self.insert(name='new yOrk')
 
-        res = self.list(name='new york')
+        res = self.list(name='new yOrk')
         data = json.loads(res.data)
         districts = data['districts']
 
         self.assertEqual(1, len(districts))
-        self.assertEqual('new york', districts[0]['name'])
+        self.assertEqual('new yOrk', districts[0]['name'])
 
     def test_get_by_id(self):
         res = self.insert(name='sulawesi')

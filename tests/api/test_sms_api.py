@@ -22,7 +22,7 @@ class SmsAPITest(unittest.TestCase):
                          first_name='Kat', district_id='sum123')
         self.user.put()
 
-        District(id='sum123', name='sumatra').put()
+        District(id='sum123', name='Sumatra', slug='sumatra').put()
         Config(id='test', twilio_phone_number='+321').put()
 
     def tearDown(self):

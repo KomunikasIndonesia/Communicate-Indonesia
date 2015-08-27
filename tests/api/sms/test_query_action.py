@@ -4,6 +4,8 @@ from app.api.sms.query_action import QueryCommand, QueryAction
 from app.model.district import District
 from app.model.farm import Farm
 from app.model.sms_request import SmsRequest
+from app.model.user import User
+from app.i18n import _
 
 
 class QueryActionTest(unittest.TestCase):
@@ -15,21 +17,22 @@ class QueryActionTest(unittest.TestCase):
         self.testbed.init_datastore_v3_stub()
         self.testbed.init_memcache_stub()
 
-        District(id='d1', name='sumatra').put()
+        District(id='d1', name='Sumatra', slug='sumatra').put()
         Farm(action='plant', district_id='d1', crop_name='potato', quantity=10).put()
         Farm(action='sell', district_id='d1', crop_name='potato', quantity=1).put()
         Farm(action='sell', district_id='d1', crop_name='carrot', quantity=2).put()
 
+        self.user = User(id='u1', role=User.ROLE_FARMER, district_id='d1')
+
     def _query(self, district, action):
         sms = SmsRequest()
         sms.body = ''
+        sms.user = self.user
+
         cmd = QueryCommand(sms)
         cmd.filter = action
         cmd.district = district
         return cmd
-
-    def test_district_does_not_exist(self):
-        pass
 
     def test_lookup_for_a_single_plant(self):
         msg = QueryAction(self._query("sumatra", 'plant')).execute()
@@ -45,3 +48,21 @@ class QueryActionTest(unittest.TestCase):
     def test_lookup_when_data_does_not_exist(self):
         res_msg = QueryAction(self._query('sumatra', 'harvest')).execute()
         self.assertEqual('Data panen tidak ada', res_msg)
+
+    def test_district_does_not_exist(self):
+        res_msg = QueryAction(self._query('London',
+                                          'harvest')).execute()
+        self.assertEqual(_('District {} is unknown').format('London'),
+                         res_msg)
+
+    def test_should_not_allow_user_without_permission(self):
+        self.user.role = None
+
+        msg = QueryAction(self._query('sumatra', 'harvest')).execute()
+        self.assertEqual(_('Command not allowed'), msg)
+
+    def test_should_ignore_district_name_case(self):
+        msg = QueryAction(self._query('SuMatRa', 'sell')).execute()
+        self.assertEqual('Total jual di Sumatra:'
+                         '\nWortel 2'
+                         '\nKentang 1', msg)
