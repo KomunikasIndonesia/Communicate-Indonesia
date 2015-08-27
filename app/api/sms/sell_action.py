@@ -1,9 +1,11 @@
+import logging
 from app.api.sms.base_action import ThreeArgCommand
 from app.command.base import Action
 from app.model.farm import Farm
 
 from app.i18n import _
 from google.appengine.ext import ndb
+from app.model.permission import RECORD_SELL
 
 
 class SellAction(Action):
@@ -19,11 +21,18 @@ class SellAction(Action):
         cmd = self.command
         user = self.command.sms.user
 
+        if RECORD_SELL not in user.permissions:
+            logging.info('{} - User {} does not have permission {}'.format(
+                cmd.sms.id, user.id, RECORD_SELL))
+            return _('Command not allowed')
+
         harvest_total = Farm.query(ndb.AND(Farm.district_id == user.district_id,
                                            Farm.crop_name == cmd.plant,
                                            Farm.action == 'harvest')).get()
 
         if not harvest_total or harvest_total.quantity < cmd.amount:
+            logging.info('{} - Not enough {} harvested'.format(cmd.sms.id,
+                                                               cmd.plant))
             return _('Not enough {} harvested').format(cmd.plant)
 
         sell_total = Farm.query(ndb.AND(Farm.district_id == user.district_id,

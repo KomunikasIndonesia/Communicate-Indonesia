@@ -37,6 +37,8 @@ class i18n(object):
             # Query district
             'Total {} in {}:':              'Total {} di {}:',
             '{} data is none':              'Data {} tidak ada',
+            'Command not allowed':          'Perintah tidak diizinkan',
+            'District {} is unknown':       'Kecamatan {} tidak diketahui',
             # Vegetable crops
             'rice':             'padi',
             'potato':           'kentang',

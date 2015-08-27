@@ -91,3 +91,9 @@ class HarvestActionTest(unittest.TestCase):
         msg = HarvestAction(self._harvest('potato', 100000)).execute()
 
         self.assertEqual(_('Not enough {} planted').format('potato'), msg)
+
+    def test_should_not_allow_user_without_permission(self):
+        self.sms.user.role = None
+
+        msg = HarvestAction(self._harvest('potato', 1)).execute()
+        self.assertEqual(_('Command not allowed'), msg)

@@ -91,3 +91,9 @@ class SellActionTest(unittest.TestCase):
         msg = SellAction(self._sell('potato', 100000)).execute()
 
         self.assertEqual(_('Not enough {} harvested').format('potato'), msg)
+
+    def test_should_not_allow_user_without_permission(self):
+        self.sms.user.role = None
+
+        msg = SellAction(self._sell('potato', 1)).execute()
+        self.assertEqual(_('Command not allowed'), msg)

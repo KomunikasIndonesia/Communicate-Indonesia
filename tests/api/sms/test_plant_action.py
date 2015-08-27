@@ -78,3 +78,9 @@ class PlantActionTest(unittest.TestCase):
         self.assertEqual('potato', data.crop_name)
         self.assertEqual(70, data.quantity)
         self.assertEqual('sul123', data.district_id)
+
+    def test_should_not_allow_user_without_permission(self):
+        self.sms.user.role = None
+
+        msg = PlantAction(self._plant('potato', 1)).execute()
+        self.assertEqual(_('Command not allowed'), msg)

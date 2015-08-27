@@ -16,14 +16,15 @@ enable_json_error(app)
 @jsonify
 def insert():
     name = request.form.get('name')
+    slug = name.lower()
 
-    existing = District.query(District.name == name).fetch()
+    existing = District.query(District.slug == slug).fetch()
     if existing:
         abort(400, 'district {} is already registered'.format(name))
 
-    new = District(id=District.id(), name=name)
+    new = District(id=District.id(), name=name, slug=slug)
     new.put()
-    return new.toJson()
+    return new.to_dict()
 
 
 @app.route('/v1/districts', methods=['GET'])
@@ -33,12 +34,12 @@ def fetch():
 
     query = District.query()
     if name:
-        query = District.query(District.name == name)
+        query = District.query(District.slug == name.lower())
 
     districts = query.order(-District.ts_created).fetch()
 
     return {
-        'districts': [d.toJson() for d in districts]
+        'districts': [d.to_dict() for d in districts]
     }
 
 
@@ -49,4 +50,4 @@ def retrieve(district_id):
     if not district:
         abort(404, 'this resource does not exist')
 
-    return district.toJson()
+    return district.to_dict()

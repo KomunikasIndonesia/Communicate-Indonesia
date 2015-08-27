@@ -1,9 +1,11 @@
+import logging
 from app.api.sms.base_action import ThreeArgCommand
 from app.command.base import Action
 from app.model.farm import Farm
 
 from app.i18n import _
 from google.appengine.ext import ndb
+from app.model.permission import RECORD_PLANT
 
 
 class PlantAction(Action):
@@ -21,6 +23,11 @@ class PlantAction(Action):
         """
         cmd = self.command
         user = cmd.sms.user
+
+        if RECORD_PLANT not in user.permissions:
+            logging.info('{} - User {} does not have permission {}'.format(
+                cmd.sms.id, user.id, RECORD_PLANT))
+            return _('Command not allowed')
 
         plant = Farm.query(ndb.AND(Farm.district_id == user.district_id,
                                    Farm.crop_name == cmd.plant,
