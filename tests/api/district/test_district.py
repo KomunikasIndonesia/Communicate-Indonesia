@@ -1,7 +1,9 @@
+from base64 import b64encode
 import json
 import unittest
 from app.api.district import app
 from google.appengine.ext import ndb, testbed
+from app.model.config import Config
 
 
 class DistrictTest(unittest.TestCase):
@@ -16,17 +18,28 @@ class DistrictTest(unittest.TestCase):
 
         ndb.get_context().clear_cache()
 
+        Config(admin_username='admin', admin_apikey='key').put()
+
     def tearDown(self):
         self.testbed.deactivate()
 
+    def headers(self, username='admin', apikey='key'):
+        return {
+            'Authorization':
+                'Basic ' + b64encode("{}:{}".format(username, apikey))
+        }
+
     def insert(self, *args, **kwargs):
-        return self.app.post('/v1/districts', data=kwargs)
+        return self.app.post('/v1/districts', data=kwargs,
+                             headers=self.headers())
 
     def list(self, *args, **kwargs):
-        return self.app.get('/v1/districts', query_string=kwargs)
+        return self.app.get('/v1/districts', query_string=kwargs,
+                            headers=self.headers())
 
     def fetch(self, district_id, **kwargs):
-        return self.app.get('/v1/districts/' + district_id, query_string=kwargs)
+        return self.app.get('/v1/districts/' + district_id, query_string=kwargs,
+                            headers=self.headers())
 
     def test_insert_district(self):
         res = self.insert(name='Sulawesi')

@@ -26,6 +26,10 @@ handlers:
   script : app.api.district.app
   secure : always
 
+- url : /v1/districts/.*
+  script : app.api.district.app
+  secure : always
+
 - url : /v1/config
   script : app.api.config.app
   secure : always

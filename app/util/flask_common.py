@@ -6,8 +6,12 @@ from app.model.config import Config
 def enable_json_error(app):
     """Convert errors into json responses"""
     def generic_error_handler(error):
+        if hasattr(error, 'code') and error.code == 404:
+            error.description = 'The uri "{}" was not found'.format(request.path)
+
         if not hasattr(error, 'description'):
             return error
+
         return json.jsonify({'error': error.description}), error.code
 
     for error in range(400, 420) + range(500, 506):

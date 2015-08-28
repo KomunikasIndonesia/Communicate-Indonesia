@@ -15,6 +15,7 @@ git-hooks:
 install: clean git-hooks venv
 	pip install -r requirements.txt -t lib/ --ignore-installed; \
 	. venv/bin/activate; \
+	pip install requests; pip install requests[security]; \
 	pip install flake8; \
 	pip install nose; \
 	pip install nosegae;\
