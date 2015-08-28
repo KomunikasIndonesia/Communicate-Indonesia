@@ -3,6 +3,15 @@ from flask import json, request, abort
 from app.model.config import Config
 
 
+def log_request(app):
+    app.logger.info({
+        'url': request.url,
+        'method': request.method,
+        'params': request.args,
+        'data': request.form
+    })
+
+
 def enable_json_error(app):
     """Convert errors into json responses"""
     def generic_error_handler(error):

@@ -7,17 +7,21 @@ from app.api.sms.plant_action import PlantCommand, PlantAction
 from app.api.sms.harvest_action import HarvestCommand, HarvestAction
 from app.api.sms.sell_action import SellCommand, SellAction
 from app.api.sms.query_action import QueryCommand, QueryAction
-from app.api.sms.broadcast_action import BroadcastCommand, BroadcastAction
 from app.command.base import Dispatcher, NoRouteError, MultipleRouteError
 from app.i18n import _
 from app.model.config import Config
 from app.model.sms_request import SmsRequest
 from app.model.user import User
-from app.util.flask_common import enable_json_error
+from app.util.flask_common import enable_json_error, log_request
+
 
 app = Flask(__name__)
-app.debug = True
 enable_json_error(app)
+
+
+@app.before_request
+def log():
+    log_request(app)
 
 
 dispatcher = Dispatcher()
@@ -25,7 +29,7 @@ dispatcher.route(PlantCommand, PlantAction)
 dispatcher.route(HarvestCommand, HarvestAction)
 dispatcher.route(SellCommand, SellAction)
 dispatcher.route(QueryCommand, QueryAction)
-dispatcher.route(BroadcastCommand, BroadcastAction)
+# dispatcher.route(BroadcastCommand, BroadcastAction)
 
 
 @app.route('/v1/sms/twilio', methods=['POST'])

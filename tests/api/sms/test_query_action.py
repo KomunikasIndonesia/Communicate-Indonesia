@@ -25,7 +25,7 @@ class QueryActionTest(unittest.TestCase):
         self.user = User(id='u1', role=User.ROLE_FARMER, district_id='d1')
 
     def _query(self, district, action):
-        sms = SmsRequest()
+        sms = SmsRequest(id=SmsRequest.id())
         sms.body = ''
         sms.user = self.user
 
