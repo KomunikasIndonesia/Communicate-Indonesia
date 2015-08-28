@@ -19,7 +19,12 @@ class User(ndb.Model):
 
     # user properties
     role = ndb.StringProperty(required=True, choices=set(ROLES))
+
+    # The phone number or client identifier of the party that initiated
+    # the call. Phone numbers are formatted with a '+' and
+    # country code, e.g. +16175551212 (E.164 format)
     phone_number = ndb.StringProperty(required=True)
+
     first_name = ndb.StringProperty(required=True)
     last_name = ndb.StringProperty()
     ts_created = ndb.DateTimeProperty(auto_now_add=True)

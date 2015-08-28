@@ -23,7 +23,7 @@ class QueryAction(Action):
 
         if RETRIEVE_ALL_DISTRICT not in user.permissions:
             logging.info('{} - User {} does not have permission {}'.format(
-                self.command.sms.id, user.id, RETRIEVE_ALL_DISTRICT))
+                self.command.sms.key.id(), user.key.id(), RETRIEVE_ALL_DISTRICT))
             return _('Command not allowed')
 
         district_name = self.command.district
@@ -32,7 +32,7 @@ class QueryAction(Action):
 
         if not district:
             logging.info('{} - District {} is unknown'.format(
-                self.command.sms.id, district_name))
+                self.command.sms.key.id(), district_name))
             return _('District {} is unknown').format(district_name)
 
         query = Farm.query(ndb.AND(Farm.action == filter,

@@ -27,3 +27,10 @@ This project is currently configured for linux
 - Go to http://localhost:8080/v1/config to see configuration
 - To set params go to http://localhost:8080/v1/config?update=true&p1=v1&p2=v2 where px and vx are config param and values.
 Example http://localhost:8080/v1/config?update=true&admin_username=blah&admin_key=key
+
+## Using pcurl
+pcurl.py is a helper to hit the api without having to create your own curl request. pcurl relies on
+a .pcurl.config file to specify the api keys for each environment. To run pcurl:
+
+1. ". venv/bin/activate" : activate virtual environment
+2. "python pcurl.py" : run pcurl

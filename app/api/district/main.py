@@ -4,6 +4,7 @@ from app.util.flask_common import (
     jsonify,
     enable_json_error,
     ensure_param,
+    require_apikey
 )
 
 
@@ -12,6 +13,7 @@ enable_json_error(app)
 
 
 @app.route('/v1/districts', methods=['POST'])
+@require_apikey
 @ensure_param('name')
 @jsonify
 def insert():
@@ -28,6 +30,7 @@ def insert():
 
 
 @app.route('/v1/districts', methods=['GET'])
+@require_apikey
 @jsonify
 def fetch():
     name = request.args.get('name')
@@ -44,6 +47,7 @@ def fetch():
 
 
 @app.route('/v1/districts/<district_id>', methods=['GET'])
+@require_apikey
 @jsonify
 def retrieve(district_id):
     district = District.get_by_id(district_id)

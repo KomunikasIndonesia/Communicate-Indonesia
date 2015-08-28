@@ -225,7 +225,7 @@ class UserTest(unittest.TestCase):
         data = json.loads(res.data)
 
         self.assertEqual(404, res.status_code)
-        self.assertEqual('this resource does not exist', data['error'])
+        self.assertEqual('The uri "/v1/users/123" was not found', data['error'])
 
     def test_fetch_empty_db(self):
         res = self.fetch()
