@@ -21,13 +21,13 @@ install: clean git-hooks venv
 	pip install mock;
 
 create-tmp:
-	mkdir -p tmp
+	rm -rf tmp; mkdir -p tmp
 
 gae-install: create-tmp
 	curl $(GAE_URL) -o tmp/$(GAE_ZIP) -z tmp/$(GAE_ZIP); \
 	unzip -o tmp/$(GAE_ZIP) -d tmp/
 
-venv-install: create-tmp
+venv-install:
 	sudo pip install virtualenv
 
 tool-install: gae-install venv-install
