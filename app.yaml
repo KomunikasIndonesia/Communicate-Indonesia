@@ -26,3 +26,9 @@ handlers:
   script : app.api.config.app
   secure : always
   login : admin
+
+skip_files:
+- tmp/.*
+- venv/.*
+- git_hooks/.*
+- .*pyc

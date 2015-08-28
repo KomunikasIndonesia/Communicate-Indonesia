@@ -1,6 +1,7 @@
 GAE_ZIP = google_appengine_1.9.24.zip
 GAE_URL = https://storage.googleapis.com/appengine-sdks/featured/$(GAE_ZIP)
 GAE_SERVER = tmp/google_appengine/dev_appserver.py
+GAE_CFG = tmp/google_appengine/appcfg.py
 
 clean:
 	rm -rf lib/ venv/
@@ -40,3 +41,9 @@ test:
 
 flake8:
 	. venv/bin/activate; flake8 app tests --max-line-length=100
+
+release-staging:
+	mv app.yaml app.yaml.orig; \
+	cat app.yaml.orig | sed -e "s/application.*/application : communicate-indonesia-staging/g" > app.yaml; \
+	python $(GAE_CFG) update .; \
+	mv app.yaml.orig app.yaml;
