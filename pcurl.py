@@ -37,7 +37,7 @@ class API(object):
                             auth=self.auth).content
 
     def get(self):
-        data = self._get_data({ 'id' : None })
+        data = self._get_data({'id': None})
         return requests.get(self.url + '/{}'.format(data['id']),
                             auth=self.auth).content
 
@@ -53,7 +53,7 @@ class UserAPI(API):
         super(UserAPI, self).__init__(base_url + '/v1/users', config)
 
     def list(self):
-        return super(UserAPI, self).list({ 'phone_number': None })
+        return super(UserAPI, self).list({'phone_number': None})
 
     def create(self):
         return super(UserAPI, self).create({
@@ -71,10 +71,10 @@ class DistrictAPI(API):
         super(DistrictAPI, self).__init__(base_url + '/v1/districts', config)
 
     def list(self):
-        return super(DistrictAPI, self).list({ 'name': None })
+        return super(DistrictAPI, self).list({'name': None})
 
     def create(self):
-        return super(DistrictAPI, self).create({ 'name': None })
+        return super(DistrictAPI, self).create({'name': None})
 
 
 def configure():

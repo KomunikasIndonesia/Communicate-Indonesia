@@ -41,7 +41,7 @@ test:
 	nosetests tests --with-gae --gae-lib-root=tmp/google_appengine --logging-level=INFO
 
 flake8:
-	. venv/bin/activate; flake8 app tests --max-line-length=100
+	. venv/bin/activate; flake8 app tests pcurl.py --max-line-length=100
 
 release-staging:
 	mv app.yaml app.yaml.orig; \
