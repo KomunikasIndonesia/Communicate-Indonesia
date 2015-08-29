@@ -1,5 +1,5 @@
 import logging
-from app.api.sms.base_action import ThreeArgCommand
+from app.api.sms.base_action import OneArgCommand
 from app.command.base import Action
 from app.model.farm import Farm
 
@@ -56,7 +56,7 @@ class HarvestAction(Action):
         return _('Harvest command succeeded')
 
 
-class HarvestCommand(ThreeArgCommand):
+class HarvestCommand(OneArgCommand):
     """
     Represents a harvest command
 
@@ -78,13 +78,16 @@ class HarvestCommand(ThreeArgCommand):
         self.plant = None
         self.amount = None
 
-        if self.args[0] and self.args[0].isdigit():
-            self.amount = int(self.args[0])
-            self.plant = self.args[1]
+        words = self.message.split()
 
-        if self.args[1] and self.args[1].isdigit():
-            self.plant = self.args[0]
-            self.amount = int(self.args[1])
+        for word in words:
+            if word.isdigit():
+                self.amount = int(word)
+                words.remove(word)
+                break
+
+        if words:
+            self.plant = ' '.join(words)
 
     def valid(self):
         valid_cmd = any([self.cmd == cmd for cmd in self.VALID_CMDS])

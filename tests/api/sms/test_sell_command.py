@@ -59,3 +59,20 @@ class SellCommandTest(unittest.TestCase):
             sms.body = body
             cmd = SellCommand(sms)
             self.assertFalse(cmd.valid())
+
+    def test_sell_multi_word(self):
+        valid_messages = [
+            'sell 20 sweet potato',
+            'sell sweet potato 20',
+            'jual 20 sweet potato',
+            'jual sweet potato 20'
+        ]
+
+        for body in valid_messages:
+            sms = SmsRequest()
+            sms.body = body
+            cmd = SellCommand(sms)
+
+            self.assertTrue(cmd.valid())
+            self.assertEqual(20, cmd.amount)
+            self.assertEqual('sweet potato', cmd.plant)

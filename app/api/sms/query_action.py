@@ -1,5 +1,5 @@
 import logging
-from app.api.sms.base_action import ThreeArgCommand
+from app.api.sms.base_action import OneArgCommand
 from app.command.base import Action
 from app.model.farm import Farm
 from app.model.district import District
@@ -49,7 +49,7 @@ class QueryAction(Action):
         return response
 
 
-class QueryCommand(ThreeArgCommand):
+class QueryCommand(OneArgCommand):
     """
     Represents a query command
 
@@ -87,22 +87,18 @@ class QueryCommand(ThreeArgCommand):
         self.district = None
         self.filter = self.DEFAULT
 
-        if not self.args[1] \
-                and self.args[0] not in self.VALID_FILTER:
-            self.district = self.args[0]
+        words = self.message.split()
+        for filter in self.VALID_FILTER:
+            if filter in words:
+                self.filter = filter
+                words.remove(filter)
+                break
 
-        if self.args[1] \
-                and self.args[0] in self.VALID_FILTER:
-            self.district = self.args[1]
-            self.filter = self.args[0]
-
-        if self.args[1] in self.VALID_FILTER:
-            self.district = self.args[0]
-            self.filter = self.args[1]
+        self.district = ' '.join(words)
 
         if self.filter in self.FILTER_MAPPING:
             self.filter = self.FILTER_MAPPING[self.filter]
 
     def valid(self):
-        valid_cmd = any([self.cmd == cmd for cmd in self.VALID_CMDS])
+        valid_cmd = self.cmd in self.VALID_CMDS
         return valid_cmd and self.district and self.filter

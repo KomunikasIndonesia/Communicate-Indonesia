@@ -80,3 +80,30 @@ class QueryCommandTest(unittest.TestCase):
 
             cmd = QueryCommand(sms)
             self.assertFalse(cmd.valid())
+
+    def test_multi_word_district(self):
+        invalid_messages = {
+            'look San Francisco harvest': ('San Francisco', 'harvest'),
+            'look harvest San Francisco':  ('San Francisco', 'harvest'),
+            'look San Francisco plant': ('San Francisco', 'plant'),
+            'look plant San Francisco': ('San Francisco', 'plant'),
+            'look Tree House District sell': ('Tree House District', 'sell'),
+            'look sell Tree House District': ('Tree House District', 'sell'),
+            'lihat East and West Java panen': ('East and West Java', 'harvest'),
+            'lihat panen East and West Java': ('East and West Java', 'harvest'),
+            'lihat tanam Some really stupidly named district':
+                ('Some really stupidly named district', 'plant'),
+            'lihat Some really stupidly named tanam': ('Some really stupidly named', 'plant'),
+            'lihat jual Yes it is': ('Yes it is', 'sell'),
+            'lihat Yes it is jual': ('Yes it is', 'sell')
+        }
+
+        for body, v in invalid_messages.items():
+            sms = SmsRequest()
+            sms.body = body
+
+            cmd = QueryCommand(sms)
+
+            self.assertTrue(cmd.valid())
+            self.assertEqual(v[0], cmd.district)
+            self.assertEqual(v[1], cmd.filter)
