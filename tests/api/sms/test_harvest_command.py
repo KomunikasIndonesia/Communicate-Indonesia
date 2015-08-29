@@ -59,3 +59,20 @@ class HarvestCommandTest(unittest.TestCase):
             sms.body = body
             cmd = HarvestCommand(sms)
             self.assertFalse(cmd.valid())
+
+    def test_multi_word_harvest(self):
+        valid_messages = [
+            'harvest 20 sweet potato',
+            'harvest sweet potato 20',
+            'panen 20 sweet potato',
+            'panen sweet potato 20'
+        ]
+
+        for body in valid_messages:
+            sms = SmsRequest()
+            sms.body = body
+            cmd = HarvestCommand(sms)
+
+            self.assertTrue(cmd.valid())
+            self.assertEqual(20, cmd.amount)
+            self.assertEqual('sweet potato', cmd.plant)

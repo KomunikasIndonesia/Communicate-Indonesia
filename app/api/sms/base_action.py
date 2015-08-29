@@ -1,6 +1,24 @@
 from app.command.base import Command
 
 
+class OneArgCommand(Command):
+    """
+    One argument commands
+
+    Format: <command> <rest>
+    """
+    def __init__(self, sms):
+        super(OneArgCommand, self).__init__(sms)
+        words = sms.body.split(' ')
+        self.sms = sms
+        self.cmd = None
+        self.message = ''
+
+        if words:
+            self.cmd = words[0].strip()
+            self.message = ' '.join(words[1:])
+
+
 class ThreeArgCommand(Command):
 
     """

@@ -59,3 +59,19 @@ class PlantCommandTest(unittest.TestCase):
             self.sms.body = body
             cmd = PlantCommand(self.sms)
             self.assertFalse(cmd.valid())
+
+    def test_multi_word_plant(self):
+        invalid_messages = {
+            'plant 20 chinese broccoli': ('chinese broccoli', 20),
+            'plant chinese broccoli 20': ('chinese broccoli', 20),
+            'tanam 20 sweet potato': ('sweet potato', 20),
+            'tanam sweet potato 20': ('sweet potato', 20),
+        }
+
+        for body, v in invalid_messages.items():
+            self.sms.body = body
+            cmd = PlantCommand(self.sms)
+
+            self.assertTrue(cmd.valid())
+            self.assertEqual(v[0], cmd.plant)
+            self.assertEqual(v[1], cmd.amount)
