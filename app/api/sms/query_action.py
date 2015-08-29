@@ -100,5 +100,5 @@ class QueryCommand(OneArgCommand):
             self.filter = self.FILTER_MAPPING[self.filter]
 
     def valid(self):
-        valid_cmd = self.cmd in self.VALID_CMDS
-        return valid_cmd and self.district and self.filter
+        return super(QueryCommand, self).valid() \
+            and self.district and self.filter

@@ -79,5 +79,5 @@ class PlantCommand(OneArgCommand):
             self.plant = ' '.join(words)
 
     def valid(self):
-        valid_cmd = self.cmd in self.VALID_CMDS
-        return valid_cmd and self.amount and self.plant
+        return super(PlantCommand, self).valid() \
+            and self.amount and self.plant

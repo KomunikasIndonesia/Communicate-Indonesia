@@ -1,3 +1,6 @@
+from app.util.matcher import match
+
+
 class Action(object):
     """
     Actions perform operations on command
@@ -20,12 +23,14 @@ class Command(object):
     """
     Command parses raw data into action specific data
     """
+    VALID_CMDS = []
+
     def __init__(self, raw_data):
         self.raw_data = raw_data
 
     def valid(self):
         """Return true if the raw data is a valid command"""
-        pass
+        return any([match(self.cmd, cmd) for cmd in self.VALID_CMDS])
 
 
 class DispatcherError(Exception):

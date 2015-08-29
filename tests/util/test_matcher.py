@@ -29,8 +29,11 @@ class MatchTest(unittest.TestCase):
         usrinput = 'tnam'
         self.assertTrue(match(usrinput, cmd))
 
-    def test_should_not_colide_other_commands(self):
-        cmds = ['tanam', 'jual', 'panen', 'lihat', 'kirim']
+    def test_should_not_collide_other_commands(self):
+        cmds = [
+            'tanam', 'jual', 'panen', 'lihat', 'kirim',
+            'plant', 'sell', 'harvest', 'look', 'broadcast'
+        ]
         for a in cmds:
             for b in cmds:
                 if a != b:
