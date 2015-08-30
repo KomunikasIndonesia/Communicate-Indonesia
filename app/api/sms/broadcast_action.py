@@ -73,8 +73,8 @@ class BroadcastAction(Action):
             taskqueue.add(
                 queue_name=self.QUEUE_NAME,
                 url=self.QUEUE_URL,
-                payload=json.dumps({'phone_number': phone_numbers,
-                                    'message': message}))
+                payload=json.dumps({'task': {'phone_number': phone_numbers,
+                                             'message': message}}))
             return _('Message delivered')
         return _('Message delivery failed')
 
