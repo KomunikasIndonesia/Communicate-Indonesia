@@ -1,5 +1,5 @@
 import logging
-from app.api.sms.base_action import ThreeArgCommand
+from app.api.sms.base_action import OneArgCommand
 from app.command.base import Action
 from app.model.user import User
 from app.model.district import District
@@ -20,37 +20,33 @@ class BroadcastAction(Action):
     """
     QUEUE_URL = '/v1/sms/broadcast'
     QUEUE_NAME = 'broadcast'
+    MULTI_DISTRICT_LIMIT = 5
 
     def __init__(self, command):
         super(BroadcastAction, self).__init__(command)
 
     def execute(self):
-        cmd = self.command
-        user = cmd.sms.user
+        user = self.command.sms.user
+        words = self.command.msg.split()
+        message = self.command.msg
         district = None
 
-        if cmd.send_to != EVERYONE:
-            district_name = cmd.send_to
+        for i in range(self.MULTI_DISTRICT_LIMIT):
+            if district:
+                message = ' '.join(words[i-1:])
+                break
+            district_name = ' '.join(words[:i])
             slug = district_name.lower()
             district = District.query(District.slug == slug).get()
 
-        if BROADCAST_OWN_DISTRICT in user.permissions:
-            # send_to as part of message
-            if not district or \
-                    (district and district.key.id() != user.district_id):
-                cmd.msg = ' '.join([cmd.send_to, cmd.msg])
-
-            farmers = User.query(ndb.AND(
-                User.role == User.ROLE_FARMER,
-                User.district_id == user.district_id)).fetch()
-
         if BROADCAST_ALL in user.permissions:
-            if cmd.send_to != EVERYONE and not district:
+            # district must be specified
+            if self.command.district != EVERYONE and not district:
                 logging.info('{} - District {} is unknown'.format(
-                    self.command.sms.id, district_name))
-                return _('District {} is unknown').format(district_name)
+                    self.command.sms.id, words[0]))
+                return _('District {} is unknown').format(words[0])
 
-            if cmd.send_to == EVERYONE:
+            if self.command.district == EVERYONE:
                 farmers = User.query(User.role == User.ROLE_FARMER).fetch()
 
             if district:
@@ -58,19 +54,32 @@ class BroadcastAction(Action):
                     User.role == User.ROLE_FARMER,
                     User.district_id == district.key.id())).fetch()
 
+        if BROADCAST_OWN_DISTRICT in user.permissions:
+            if self.command.district == EVERYONE:
+                words.insert(0, EVERYONE)
+
+            # own district is not specified but valid
+            if not district or \
+                    (district and district.key.id() != user.district_id):
+                message = ' '.join(words)
+
+            farmers = User.query(ndb.AND(
+                User.role == User.ROLE_FARMER,
+                User.district_id == user.district_id)).fetch()
+
         phone_numbers = [farmer.phone_number for farmer in farmers]
 
         if phone_numbers:
             taskqueue.add(
                 queue_name=self.QUEUE_NAME,
                 url=self.QUEUE_URL,
-                payload=json.dumps({'phone_number': phone_numbers,
-                                    'message': cmd.msg}))
-            return _('Message sent to {}').format(_(cmd.send_to))
+                payload=json.dumps({'task': {'phone_number': phone_numbers,
+                                             'message': message}}))
+            return _('Message delivered')
         return _('Message delivery failed')
 
 
-class BroadcastCommand(ThreeArgCommand):
+class BroadcastCommand(OneArgCommand):
     """
     Represents a broadcast command
 
@@ -88,29 +97,23 @@ class BroadcastCommand(ThreeArgCommand):
     ]
 
     TO_ALL = [
-        'everyone',  # en
-        'semua'      # in
+        EVERYONE,  # en
+        'semua'    # in
     ]
 
     def __init__(self, sms):
         super(BroadcastCommand, self).__init__(sms)
-        self.send_to = None  # send_to can be part of message for leader
+        self.district = None
         self.msg = None
 
-        if self.args[0]:
-            self.send_to = self.args[0]
-            if self.args[0].lower() in self.TO_ALL:
-                self.send_to = EVERYONE
+        words = self.message.split()
+        if words:
+            self.msg = ' '.join(words)
 
-        if self.args[1]:
-            self.msg = self.args[1]
-
-        if not self.args[1] and sms.user.role == User.ROLE_DISTRICT_LEADER:
-            self.msg = ' '
-
-        if self.message:
-            self.msg = ' '.join([self.msg, self.message])
+        if words and words[0] in self.TO_ALL:
+            self.district = EVERYONE
+            self.msg = ' '.join(words[1:])
 
     def valid(self):
-        valid_cmd = any([self.cmd == cmd for cmd in self.VALID_CMDS])
-        return valid_cmd and self.send_to and self.msg
+        valid_cmd = self.cmd in self.VALID_CMDS
+        return valid_cmd and self.msg

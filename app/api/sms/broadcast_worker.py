@@ -6,19 +6,22 @@ from app.util.flask_common import (
     enable_json_error,
     ensure_param
 )
+import json
 
 app = Flask(__name__)
 enable_json_error(app)
 
 
 @app.route('/v1/sms/broadcast', methods=['POST'])
-@ensure_param('phone_number')
-@ensure_param('message')
+@ensure_param('task')
 @jsonify
 def broadcast_sms():
     config = Config.query().get()
-    phone_numbers = request.form.get('phone_number')
-    message = request.form.get('message')
+    data = request.form.get('task')
+
+    d = json.loads(data)
+    phone_numbers = d['phone_number']
+    message = d['message']
 
     client = TwilioRestClient(
         config.twilio_account_sid,

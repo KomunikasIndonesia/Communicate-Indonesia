@@ -7,19 +7,13 @@ from app.model.user import User
 
 class BroadcastCommandTest(unittest.TestCase):
 
-    def _broadcast_cmd_hb(self, body):
+    def _broadcast_cmd(self, body):
         sms = SmsRequest()
-        sms.user = User(role='hutan_biru')
+        sms.user = User()
         sms.body = body
         return BroadcastCommand(sms)
 
-    def _broadcast_cmd_leader(self, body):
-        sms = SmsRequest()
-        sms.user = User(role='district_leader')
-        sms.body = body
-        return BroadcastCommand(sms)
-
-    def test_broadcast_command_from_hb(self):
+    def test_broadcast_command(self):
         valid_messages = [
             'broadcast lompoko hello farmers',
             'kirim lompoko hello farmers',
@@ -28,18 +22,18 @@ class BroadcastCommandTest(unittest.TestCase):
         ]
 
         for body in valid_messages[:2]:
-            cmd = self._broadcast_cmd_hb(body)
+            cmd = self._broadcast_cmd(body)
             self.assertTrue(cmd.valid())
-            self.assertEqual('lompoko', cmd.send_to)
-            self.assertEqual('hello farmers', cmd.msg)
+            self.assertEqual(None, cmd.district)
+            self.assertEqual('lompoko hello farmers', cmd.msg)
 
         for body in valid_messages[-2:]:
-            cmd = self._broadcast_cmd_hb(body)
+            cmd = self._broadcast_cmd(body)
             self.assertTrue(cmd.valid())
-            self.assertEqual('everyone', cmd.send_to)
+            self.assertEqual('everyone', cmd.district)
             self.assertEqual('hello farmers', cmd.msg)
 
-    def test_broadcast_command_short_from_hb(self):
+    def test_broadcast_command_short(self):
         valid_messages = [
             'broadcast lompoko hello',
             'kirim lompoko hello',
@@ -48,94 +42,43 @@ class BroadcastCommandTest(unittest.TestCase):
         ]
 
         for body in valid_messages[:2]:
-            cmd = self._broadcast_cmd_hb(body)
+            cmd = self._broadcast_cmd(body)
             self.assertTrue(cmd.valid())
-            self.assertEqual('lompoko', cmd.send_to)
-            self.assertEqual('hello', cmd.msg)
+            self.assertEqual(None, cmd.district)
+            self.assertEqual('lompoko hello', cmd.msg)
 
         for body in valid_messages[-2:]:
-            cmd = self._broadcast_cmd_hb(body)
+            cmd = self._broadcast_cmd(body)
             self.assertTrue(cmd.valid())
-            self.assertEqual('everyone', cmd.send_to)
+            self.assertEqual('everyone', cmd.district)
             self.assertEqual('hello', cmd.msg)
 
-    def test_broadcast_command_invalid_from_hb(self):
-        invalid_messages = [
-            'broadcast lompoko',
-            'broadcast everyone',
-            'kirim lompoko',
-            'kirim semua',
-            'broadcast',
-            'kirim',
-            'sell hello world',
-            'jual hello world'
-        ]
-
-        for body in invalid_messages:
-            cmd = self._broadcast_cmd_hb(body)
-            self.assertFalse(cmd.valid())
-
-    def test_broadcast_command_from_leader(self):
-        valid_messages = [
-            'broadcast hello people',
-            'kirim hello people',
-            'broadcast lompoko hello people',
-            'kirim lompoko hello people',
-        ]
-
-        for body in valid_messages[:2]:
-            cmd = self._broadcast_cmd_leader(body)
-            self.assertTrue(cmd.valid())
-            self.assertEqual('hello', cmd.send_to)
-            self.assertEqual('people', cmd.msg)
-
-        for body in valid_messages[-2:]:
-            cmd = self._broadcast_cmd_leader(body)
-            self.assertTrue(cmd.valid())
-            self.assertEqual('lompoko', cmd.send_to)
-            self.assertEqual('hello people', cmd.msg)
-
-    def test_broadcast_command_short_from_leader(self):
+    def test_broadcast_command_one_word(self):
         valid_messages = [
             'broadcast hello',
-            'kirim hello',
-            'broadcast lompoko hello',
-            'kirim lompoko hello'
+            'kirim hello'
         ]
 
-        for body in valid_messages[:2]:
-            cmd = self._broadcast_cmd_leader(body)
+        for body in valid_messages:
+            cmd = self._broadcast_cmd(body)
             self.assertTrue(cmd.valid())
-            self.assertEqual('hello', cmd.send_to)
-            self.assertEqual(' ', cmd.msg)
-
-        for body in valid_messages[-2:]:
-            cmd = self._broadcast_cmd_leader(body)
-            self.assertTrue(cmd.valid())
-            self.assertEqual('lompoko', cmd.send_to)
+            self.assertEqual(None, cmd.district)
             self.assertEqual('hello', cmd.msg)
 
-    def test_broadcast_command_long_from_leader(self):
+    def test_broadcast_command_multiwords_district(self):
         valid_messages = [
-            'broadcast hello friends in sulawesi!',
-            'kirim hello friends in sulawesi!',
-            'broadcast lompoko hello friends in sulawesi!',
-            'kirim lompoko hello friends in sulawesi!'
+            'broadcast new york hello',
+            'kirim new york hello'
         ]
 
-        for body in valid_messages[:2]:
-            cmd = self._broadcast_cmd_leader(body)
+        # multiwords will be checked on BroadcastAction
+        for body in valid_messages:
+            cmd = self._broadcast_cmd(body)
             self.assertTrue(cmd.valid())
-            self.assertEqual('hello', cmd.send_to)
-            self.assertEqual('friends in sulawesi!', cmd.msg)
+            self.assertEqual(None, cmd.district)
+            self.assertEqual('new york hello', cmd.msg)
 
-        for body in valid_messages[-2:]:
-            cmd = self._broadcast_cmd_leader(body)
-            self.assertTrue(cmd.valid())
-            self.assertEqual('lompoko', cmd.send_to)
-            self.assertEqual('hello friends in sulawesi!', cmd.msg)
-
-    def test_broadcast_command_invalid_from_leader(self):
+    def test_broadcast_command_invalid(self):
         invalid_messages = [
             'broadcast',
             'kirim',
@@ -144,5 +87,5 @@ class BroadcastCommandTest(unittest.TestCase):
         ]
 
         for body in invalid_messages:
-            cmd = self._broadcast_cmd_leader(body)
+            cmd = self._broadcast_cmd(body)
             self.assertFalse(cmd.valid())

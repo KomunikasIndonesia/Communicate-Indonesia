@@ -32,7 +32,7 @@ class i18n(object):
             'Not enough {} harvested':      'Panen belum mencukupi',
             'Sell command succeeded':       'Perintah jual berhasil',
             'Unknown command':              'Perintah tidak dikenal',
-            'Message sent to {}':           'Pesan berhasil dikirim ke {}',
+            'Message delivered':            'Pesan berhasil dikirim',
             'Message delivery failed':      'Pesan gagal dikirim',
             # Query district
             'Total {} in {}:':              'Total {} di {}:',
