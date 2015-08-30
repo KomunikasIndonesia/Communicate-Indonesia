@@ -60,7 +60,7 @@ class User(ndb.Model):
 
         if self.role == self.ROLE_HUTAN_BIRU:
             return [RETRIEVE_ALL_DISTRICT,
-                    BROADCAST_OWN_DISTRICT, BROADCAST_ALL]
+                    BROADCAST_ALL]
 
         # Empty permission without role.
         # All users should have a role or in the future
