@@ -30,7 +30,7 @@ class Command(object):
 
     def valid(self):
         """Return true if the raw data is a valid command"""
-        return any([match(self.cmd, cmd) for cmd in self.VALID_CMDS])
+        return any([match(self.cmd.lower(), cmd) for cmd in self.VALID_CMDS])
 
 
 class DispatcherError(Exception):

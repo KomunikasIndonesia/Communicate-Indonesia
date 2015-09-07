@@ -115,5 +115,5 @@ class BroadcastCommand(OneArgCommand):
             self.msg = ' '.join(words[1:])
 
     def valid(self):
-        valid_cmd = self.cmd in self.VALID_CMDS
+        valid_cmd = super(BroadcastCommand, self).valid()
         return valid_cmd and self.msg

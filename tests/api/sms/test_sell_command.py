@@ -22,6 +22,19 @@ class SellCommandTest(unittest.TestCase):
             self.assertEqual(20, cmd.amount)
             self.assertEqual('potato', cmd.plant)
 
+    def test_ignore_case(self):
+        valid_messages = [
+            'SeLL 20 potato',
+        ]
+
+        for body in valid_messages:
+            sms = SmsRequest()
+            sms.body = body
+            cmd = SellCommand(sms)
+            self.assertTrue(cmd.valid())
+            self.assertEqual(20, cmd.amount)
+            self.assertEqual('potato', cmd.plant)
+
     def test_sell_command_without_sell(self):
         invalid_messages = [
             'sell 20',
