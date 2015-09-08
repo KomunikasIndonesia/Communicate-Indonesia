@@ -1,3 +1,4 @@
+import readline  # noqa here to allow arrow keys in raw_input
 import argparse
 import json
 import os
