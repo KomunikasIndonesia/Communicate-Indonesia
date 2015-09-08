@@ -1,6 +1,7 @@
 import unittest
 
 from app.api.sms import app
+from app.i18n import _
 from app.model.config import Config
 from app.model.user import User
 from app.model.district import District
@@ -17,8 +18,10 @@ class SmsAPITest(unittest.TestCase):
         self.testbed.activate()
         self.testbed.init_datastore_v3_stub()
         self.testbed.init_memcache_stub()
+        self.testbed.init_taskqueue_stub(root_path='.')
 
-        self.user = User(role='farmer', phone_number='6072809193',
+        self.user = User(role='district_leader',
+                         phone_number='6072809193',
                          first_name='Kat', district_id='sum123')
         self.user.put()
 
@@ -36,6 +39,17 @@ class SmsAPITest(unittest.TestCase):
             'Body': msg
         })
         return res
+
+    def test_broadcast(self):
+        # add farmers
+        User(role='farmer',
+             phone_number='123',
+             first_name='farmer1',
+             district_id='sum123').put()
+
+        res = self.send('broadcast hello world')
+
+        self.assertIn(_('Message delivered'), res.data)
 
     def test_multiple_plants(self):
         self.send('plant 5 potato')

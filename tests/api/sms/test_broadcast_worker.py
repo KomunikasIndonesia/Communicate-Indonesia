@@ -28,7 +28,7 @@ class BroadcastWorkerTest(unittest.TestCase):
     @patch('twilio.rest.resources.base.make_request')
     @patch('twilio.rest.resources.base.ListResource.create_instance')
     def test_single_phone_number(self, req_mock, ins_mock):
-        task = json.dumps({'phone_number': ['+111'],
+        task = json.dumps({'phone_numbers': ['+111'],
                            'message': 'hello'})
         res = self._broadcast_sms(task=task)
         r = json.loads(res.data)
@@ -39,7 +39,7 @@ class BroadcastWorkerTest(unittest.TestCase):
     @patch('twilio.rest.resources.base.make_request')
     @patch('twilio.rest.resources.base.ListResource.create_instance')
     def test_multiple_phone_numbers(self, req_mock, ins_mock):
-        task = json.dumps({'phone_number': ['+111', '+222', '+333'],
+        task = json.dumps({'phone_numbers': ['+111', '+222', '+333'],
                            'message': 'hello people'})
         res = self._broadcast_sms(task=task)
         r = json.loads(res.data)

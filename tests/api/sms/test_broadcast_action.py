@@ -65,7 +65,7 @@ class BroadcastActionTest(unittest.TestCase):
 
         data = json.loads(tasks[0].payload)
         d = data['task']
-        self.assertEqual(['+111', '+222', '+333', '+444'], d['phone_number'])
+        self.assertEqual(['+111', '+222', '+333', '+444'], d['phone_numbers'])
         self.assertEqual('hello', d['message'])
 
     def test_hb_send_other_district(self):
@@ -75,7 +75,7 @@ class BroadcastActionTest(unittest.TestCase):
 
         data = json.loads(tasks[0].payload)
         d = data['task']
-        self.assertEqual(['+111', '+222'], d['phone_number'])
+        self.assertEqual(['+111', '+222'], d['phone_numbers'])
         self.assertEqual('hello', d['message'])
 
     def test_hb_send_multiwords_district(self):
@@ -89,12 +89,12 @@ class BroadcastActionTest(unittest.TestCase):
 
         data = json.loads(tasks[0].payload)
         d = data['task']
-        self.assertEqual(['+333'], d['phone_number'])
+        self.assertEqual(['+333'], d['phone_numbers'])
         self.assertEqual('hello', d['message'])
 
         data = json.loads(tasks[1].payload)
         d = data['task']
-        self.assertEqual(['+444'], d['phone_number'])
+        self.assertEqual(['+444'], d['phone_numbers'])
         self.assertEqual('hello', d['message'])
 
     def test_hb_district_does_not_exist(self):
@@ -114,7 +114,7 @@ class BroadcastActionTest(unittest.TestCase):
         for task in tasks:
             data = json.loads(task.payload)
             d = data['task']
-            self.assertEqual(['+333'], d['phone_number'])
+            self.assertEqual(['+333'], d['phone_numbers'])
             self.assertEqual('hello', d['message'])
 
     def test_farmer_leader_long_message(self):
@@ -129,7 +129,7 @@ class BroadcastActionTest(unittest.TestCase):
         for task in tasks:
             data = json.loads(task.payload)
             d = data['task']
-            self.assertEqual(['+333'], d['phone_number'])
+            self.assertEqual(['+333'], d['phone_numbers'])
             self.assertEqual('hello my people', d['message'])
 
     def test_farmer_leader_should_send_to_same_district_only(self):
@@ -143,10 +143,10 @@ class BroadcastActionTest(unittest.TestCase):
 
         data = json.loads(tasks[0].payload)
         d = data['task']
-        self.assertEqual(['+333'], d['phone_number'])
+        self.assertEqual(['+333'], d['phone_numbers'])
         self.assertEqual('everyone hello', d['message'])
 
         data = json.loads(tasks[1].payload)
         d = data['task']
-        self.assertEqual(['+333'], d['phone_number'])
+        self.assertEqual(['+333'], d['phone_numbers'])
         self.assertEqual('lompoko hello', d['message'])

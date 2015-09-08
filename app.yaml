@@ -7,7 +7,7 @@ threadsafe : true
 handlers:
 
 - url : /v1/sms/broadcast
-  script : app.api.sms.broadcast.app
+  script : app.api.sms.broadcast_worker.app
   secure : always
 
 - url : /v1/sms/.*

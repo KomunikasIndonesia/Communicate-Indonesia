@@ -2,6 +2,7 @@ from datetime import datetime
 
 from flask import Flask, request, abort
 from twilio import twiml
+from app.api.sms.broadcast_action import BroadcastAction, BroadcastCommand
 
 from app.api.sms.plant_action import PlantCommand, PlantAction
 from app.api.sms.harvest_action import HarvestCommand, HarvestAction
@@ -29,7 +30,7 @@ dispatcher.route(PlantCommand, PlantAction)
 dispatcher.route(HarvestCommand, HarvestAction)
 dispatcher.route(SellCommand, SellAction)
 dispatcher.route(QueryCommand, QueryAction)
-# dispatcher.route(BroadcastCommand, BroadcastAction)
+dispatcher.route(BroadcastCommand, BroadcastAction)
 
 
 @app.route('/v1/sms/twilio', methods=['POST'])
