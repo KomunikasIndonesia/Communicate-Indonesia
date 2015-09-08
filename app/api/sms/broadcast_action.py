@@ -29,6 +29,7 @@ class BroadcastAction(Action):
         user = self.command.sms.user
         words = self.command.msg.split()
         message = self.command.msg
+        farmers = None
         district = None
 
         for i in range(self.MULTI_DISTRICT_LIMIT):
@@ -54,7 +55,7 @@ class BroadcastAction(Action):
                     User.role == User.ROLE_FARMER,
                     User.district_id == district.key.id())).fetch()
 
-        if BROADCAST_OWN_DISTRICT in user.permissions:
+        elif BROADCAST_OWN_DISTRICT in user.permissions:
             if self.command.district == EVERYONE:
                 words.insert(0, EVERYONE)
 
@@ -67,13 +68,16 @@ class BroadcastAction(Action):
                 User.role == User.ROLE_FARMER,
                 User.district_id == user.district_id)).fetch()
 
+        else:
+            return _('Command not allowed')
+
         phone_numbers = [farmer.phone_number for farmer in farmers]
 
         if phone_numbers:
             taskqueue.add(
                 queue_name=self.QUEUE_NAME,
                 url=self.QUEUE_URL,
-                payload=json.dumps({'task': {'phone_number': phone_numbers,
+                payload=json.dumps({'task': {'phone_numbers': phone_numbers,
                                              'message': message}}))
             return _('Message delivered')
         return _('Message delivery failed')

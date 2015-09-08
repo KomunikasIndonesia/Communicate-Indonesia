@@ -20,7 +20,7 @@ def broadcast_sms():
     data = request.form.get('task')
 
     d = json.loads(data)
-    phone_numbers = d['phone_number']
+    phone_numbers = d['phone_numbers']
     message = d['message']
 
     client = TwilioRestClient(
