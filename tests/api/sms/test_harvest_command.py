@@ -76,3 +76,17 @@ class HarvestCommandTest(unittest.TestCase):
             self.assertTrue(cmd.valid())
             self.assertEqual(20, cmd.amount)
             self.assertEqual('sweet potato', cmd.plant)
+
+    def test_harvest_command_should_ignore_cases(self):
+        valid_messages = {
+            'harvest 20 Potato': 'potato',
+            'harvest 20 POTATO': 'potato',
+            'harvest 20 Chinese Broccoli': 'chinese broccoli',
+            'harvest 20 CHINESE BROCCOLI': 'chinese broccoli'
+        }
+
+        for body, v in valid_messages.iteritems():
+            sms = SmsRequest()
+            sms.body = body
+            cmd = HarvestCommand(sms)
+            self.assertEqual(v, cmd.plant)

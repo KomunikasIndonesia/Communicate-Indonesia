@@ -85,7 +85,7 @@ class SellCommand(OneArgCommand):
                 break
 
         if words:
-            self.plant = ' '.join(words)
+            self.plant = ' '.join(words).lower()
 
     def valid(self):
         return super(SellCommand, self).valid() \

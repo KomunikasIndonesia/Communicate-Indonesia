@@ -89,3 +89,17 @@ class SellCommandTest(unittest.TestCase):
             self.assertTrue(cmd.valid())
             self.assertEqual(20, cmd.amount)
             self.assertEqual('sweet potato', cmd.plant)
+
+    def test_sell_command_should_ignore_cases(self):
+        valid_messages = {
+            'sell 20 Potato': 'potato',
+            'sell 20 POTATO': 'potato',
+            'sell 20 Chinese Broccoli': 'chinese broccoli',
+            'sell 20 CHINESE BROCCOLI': 'chinese broccoli'
+        }
+
+        for body, v in valid_messages.iteritems():
+            sms = SmsRequest()
+            sms.body = body
+            cmd = SellCommand(sms)
+            self.assertEqual(v, cmd.plant)
