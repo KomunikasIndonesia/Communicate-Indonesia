@@ -70,7 +70,11 @@ def incoming_twilio_sms():
     try:
         response_message = dispatcher.dispatch(sms)
     except (NoRouteError, MultipleRouteError):
-        response_message = _('Unknown command')
+        response_message = _('Unknown command, valid format below:\n'
+                             'PLANT [qty] [type]\n'
+                             'HARVEST [qty] [type]\n'
+                             'SELL [qty] [type]\n'
+                             'BROADCAST [msg]')
 
     if response_message:
         config = Config.query().get()

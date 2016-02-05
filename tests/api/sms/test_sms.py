@@ -138,7 +138,12 @@ class SmsTest(unittest.TestCase):
         self.assertEqual('<?xml version="1.0" encoding="UTF-8"?>'
                          '<Response><Sms from="+321" to="+123">'
                          '{}'
-                         '</Sms></Response>'.format(_('Unknown command')),
+                         '</Sms></Response>'.format(
+                            _('Unknown command, valid format below:\n'
+                              'PLANT [qty] [type]\n'
+                              'HARVEST [qty] [type]\n'
+                              'SELL [qty] [type]\n'
+                              'BROADCAST [msg]')),
                          res.data)
 
     @patch('app.api.sms.main.dispatcher')
@@ -157,7 +162,12 @@ class SmsTest(unittest.TestCase):
         self.assertEqual('<?xml version="1.0" encoding="UTF-8"?>'
                          '<Response><Sms from="+321" to="+123">'
                          '{}'
-                         '</Sms></Response>'.format(_('Unknown command')),
+                         '</Sms></Response>'.format(
+                            _('Unknown command, valid format below:\n'
+                              'PLANT [qty] [type]\n'
+                              'HARVEST [qty] [type]\n'
+                              'SELL [qty] [type]\n'
+                              'BROADCAST [msg]')),
                          res.data)
 
 if __name__ == '__main__':
