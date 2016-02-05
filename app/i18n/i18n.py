@@ -32,6 +32,16 @@ class i18n(object):
             'Not enough {} harvested':      'Panen belum mencukupi',
             'Sell command succeeded':       'Perintah jual berhasil',
             'Unknown command':              'Perintah tidak dikenal',
+
+            'Unknown command, valid format below:\n'
+            'PLANT [qty] [type]\n'
+            'HARVEST [qty] [type]\n'
+            'SELL [qty] [type]\n'
+            'BROADCAST [msg]':              'Perintah tidak dikenal, ketik cara berikut:\n'
+                                            'TANAM [jumlah] [jenis]\n'
+                                            'PANEN [jumlah] [jenis]\n'
+                                            'JUAL [jumlah] [jenis]',
+
             'Message delivered':            'Pesan berhasil dikirim',
             'Message delivery failed':      'Pesan gagal dikirim',
             # Query district
