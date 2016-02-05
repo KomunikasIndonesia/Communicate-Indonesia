@@ -75,3 +75,16 @@ class PlantCommandTest(unittest.TestCase):
             self.assertTrue(cmd.valid())
             self.assertEqual(v[0], cmd.plant)
             self.assertEqual(v[1], cmd.amount)
+
+    def test_plant_command_should_ignore_cases(self):
+        valid_messages = {
+            'plant 20 Potato': 'potato',
+            'plant 20 POTATO': 'potato',
+            'plant 20 Chinese Broccoli': 'chinese broccoli',
+            'plant 20 CHINESE BROCCOLI': 'chinese broccoli'
+        }
+
+        for body, v in valid_messages.iteritems():
+            self.sms.body = body
+            cmd = PlantCommand(self.sms)
+            self.assertEqual(v, cmd.plant)
