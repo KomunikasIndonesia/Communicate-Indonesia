@@ -49,6 +49,10 @@ class i18n(object):
             '{} data is none':              'Data {} tidak ada',
             'Command not allowed':          'Perintah tidak diizinkan',
             'District {} is unknown':       'Daerah {} tidak diketahui',
+            # Fallback url
+            'Sorry, we are having some'
+            'temporary server issues':      'Mohon maaf, kami sedang mengalami'
+                                            'gangguan teknis',
             # Vegetable crops
             'rice':             'padi',
             'potato':           'kentang',
