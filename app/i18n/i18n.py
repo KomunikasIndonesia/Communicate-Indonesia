@@ -50,9 +50,8 @@ class i18n(object):
             'Command not allowed':          'Perintah tidak diizinkan',
             'District {} is unknown':       'Daerah {} tidak diketahui',
             # Fallback url
-            'Sorry, we are having some'
-            'temporary server issues':      'Mohon maaf, kami sedang mengalami'
-                                            'gangguan teknis',
+            'Sorry, we are having some temporary server issues':
+                'Mohon maaf, kami sedang mengalami gangguan teknis',
             # Vegetable crops
             'rice':             'padi',
             'potato':           'kentang',
