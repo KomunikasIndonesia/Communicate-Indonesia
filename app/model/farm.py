@@ -46,8 +46,11 @@ class VolumeConverter(UnitConverter):
 
 class Farm(ndb.Model):
     ACTION = ['harvest', 'plant', 'sell']
-    weight_unit = 'g'
-    volume_unit = 'L'
+    DEFAULT_UNITS = {
+        'weight': ('g', WeightConverter),
+        'volume': ('L', VolumeConverter),
+        'count': ('', UnitConverter)
+    }
 
     # relationship
     district_id = ndb.StringProperty(required=True)
@@ -56,11 +59,7 @@ class Farm(ndb.Model):
     action = ndb.StringProperty(required=True, choices=set(ACTION))
     crop_name = ndb.StringProperty(required=True)
     quantity = ndb.IntegerProperty(required=True)
-    unit_type = ndb.StringProperty(required=True, choices=[
-        'weight',  # stored in grams
-        'volume',  # stored in litres
-        'count'  # stored as just plain quantity
-    ])
+    unit_type = ndb.StringProperty(required=True, choices=DEFAULT_UNITS.keys())
     ts_created = ndb.DateTimeProperty(auto_now_add=True)
     ts_updated = ndb.DateTimeProperty(auto_now=True)
 
@@ -78,15 +77,7 @@ class Farm(ndb.Model):
 
     @property
     def quantity_and_unit(self):
-        converter = UnitConverter
-        unit = ''
-
-        if self.unit_type == 'weight':
-            converter = WeightConverter
-            unit = self.weight_unit
-        if self.unit_type == 'volume':
-            converter = VolumeConverter
-            unit = self.volume_unit
+        unit, converter = self.DEFAULT_UNITS[self.unit_type]
 
         largest_unit = converter.largest_unit(self.quantity, unit)
         quantity = converter.convert_to_unit(self.quantity, unit, largest_unit)
