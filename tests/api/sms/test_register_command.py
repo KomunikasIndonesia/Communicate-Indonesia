@@ -28,7 +28,7 @@ class RegisterCommandTest(unittest.TestCase):
             self.assertEqual('potato', cmd.plant)
             self.assertEqual(unit_type, cmd.unit_type)
 
-    def test_plant_command_without_plant(self):
+    def test_register_command_without_plant(self):
         invalid_messages = [
             'register weight',
             'daftar weight',
@@ -40,11 +40,23 @@ class RegisterCommandTest(unittest.TestCase):
             cmd = RegisterCommand(self.sms)
             self.assertFalse(cmd.valid())
 
-    def test_plant_command_without_unit_type(self):
+    def test_register_command_without_unit_type(self):
         invalid_messages = [
             'register potato',
             'daftar potato',
             'mendaftar potato'
+        ]
+
+        for body in invalid_messages:
+            self.sms.body = body
+            cmd = RegisterCommand(self.sms)
+            self.assertFalse(cmd.valid())
+
+    def test_register_command_with_invalid_unit_type(self):
+        invalid_messages = [
+            'register potato blah',
+            'daftar potato stuff',
+            'mendaftar potato coun'
         ]
 
         for body in invalid_messages:
