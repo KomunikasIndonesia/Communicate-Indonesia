@@ -28,6 +28,10 @@ class UnitConverter(object):
         to_multiplier = cls._reverse_index[to_unit]
         return quantity * original_multiplier / to_multiplier
 
+    @classmethod
+    def valid(cls, unit):
+        return unit in (u[1] for u in cls.UNITS)
+
 
 class WeightConverter(UnitConverter):
     UNITS = [
@@ -84,6 +88,14 @@ class Farm(ndb.Model):
         quantity = converter.convert_to_unit(self.quantity, unit, largest_unit)
 
         return '{} {}'.format(quantity, _(largest_unit)).strip()
+
+    @property
+    def default_unit(self):
+        return self.DEFAULT_UNITS[self.unit_type][0]
+
+    @property
+    def unit_converter(self):
+        return self.DEFAULT_UNITS[self.unit_type][1]
 
     @staticmethod
     def id():

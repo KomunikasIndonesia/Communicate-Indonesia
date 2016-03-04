@@ -49,6 +49,9 @@ class i18n(object):
 
             'Message delivered':            'Pesan berhasil dikirim',
             'Message delivery failed':      'Pesan gagal dikirim',
+
+            'Plant not registered':         'Tanaman belum terdaftar',
+            'Invalid unit for {} command':  'Unit tidak diketahui',
             # Query district
             'Total {} in {}:':              'Total {} di {}:',
             '{} data is none':              'Data {} tidak ada',

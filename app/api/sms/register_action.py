@@ -70,7 +70,7 @@ class RegisterCommand(ThreeArgCommand):
 
     eg.
         register potato weight
-        dafter potato berat
+        daftar potato berat
         mendaftar kentang berat
     """
     VALID_CMDS = [

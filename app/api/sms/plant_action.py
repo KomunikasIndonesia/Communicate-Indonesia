@@ -33,13 +33,13 @@ class PlantAction(Action):
                                    Farm.crop_name == cmd.plant,
                                    Farm.action == 'plant')).get()
         if not plant:
-            plant = Farm(id=Farm.id(),
-                         district_id=user.district_id,
-                         action=self.CMD,
-                         crop_name=cmd.plant,
-                         unit_type='count',
-                         quantity=0)
+            return _('Plant not registered')
 
+        if not plant.unit_converter.valid(cmd.unit):
+            return _('Invalid unit for {} command'.format(self.CMD))
+
+        cmd.amount = plant.unit_converter.convert_to_unit(
+            cmd.amount, cmd.unit, plant.default_unit)
         plant.quantity += cmd.amount
         plant.put()
 
