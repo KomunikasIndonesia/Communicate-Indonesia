@@ -23,8 +23,10 @@ class SellActionTest(unittest.TestCase):
                              district_id='sul123')
         self.sms.body = ''
 
-        Farm(action='harvest', district_id='sul123', crop_name='potato', quantity=10).put()
-        Farm(action='harvest', district_id='sul123', crop_name='carrot', quantity=5).put()
+        Farm(action='harvest', district_id='sul123', crop_name='potato', quantity=10,
+             unit_type='count').put()
+        Farm(action='harvest', district_id='sul123', crop_name='carrot', quantity=5,
+             unit_type='count').put()
 
     def _sell(self, plant, amount):
         cmd = SellCommand(self.sms)

@@ -18,9 +18,12 @@ class QueryActionTest(unittest.TestCase):
         self.testbed.init_memcache_stub()
 
         District(id='d1', name='Sumatra', slug='sumatra').put()
-        Farm(action='plant', district_id='d1', crop_name='potato', quantity=10).put()
-        Farm(action='sell', district_id='d1', crop_name='potato', quantity=1).put()
-        Farm(action='sell', district_id='d1', crop_name='carrot', quantity=2).put()
+        Farm(action='plant', district_id='d1', crop_name='potato', quantity=10,
+             unit_type='count').put()
+        Farm(action='sell', district_id='d1', crop_name='potato', quantity=1,
+             unit_type='count').put()
+        Farm(action='sell', district_id='d1', crop_name='carrot', quantity=2,
+             unit_type='count').put()
 
         self.user = User(id='u1', role=User.ROLE_FARMER, district_id='d1')
 

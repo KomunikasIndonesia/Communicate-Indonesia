@@ -44,6 +44,7 @@ class SellAction(Action):
                               district_id=user.district_id,
                               action=self.CMD,
                               crop_name=cmd.plant,
+                              unit_type='count',
                               quantity=0)
 
         harvest_total.quantity -= cmd.amount

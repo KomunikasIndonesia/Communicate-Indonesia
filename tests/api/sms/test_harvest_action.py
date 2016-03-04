@@ -23,8 +23,10 @@ class HarvestActionTest(unittest.TestCase):
                              district_id='sul123')
         self.sms.body = ''
 
-        Farm(action='plant', district_id='sul123', crop_name='potato', quantity=10).put()
-        Farm(action='plant', district_id='sul123', crop_name='carrot', quantity=5).put()
+        Farm(action='plant', district_id='sul123', crop_name='potato', quantity=10,
+             unit_type='count').put()
+        Farm(action='plant', district_id='sul123', crop_name='carrot', quantity=5,
+             unit_type='count').put()
 
     def _harvest(self, plant, amount):
         cmd = HarvestCommand(self.sms)
