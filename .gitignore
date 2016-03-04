@@ -4,3 +4,4 @@ venv/
 .idea/
 *.pyc
 .pcurl.config
+.DS_STORE

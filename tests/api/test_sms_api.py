@@ -52,13 +52,13 @@ class SmsAPITest(unittest.TestCase):
         self.assertIn(_('Message delivered'), res.data)
 
     def test_multiple_plants(self):
-        self.send('plant 5 potato')
-        self.send('plant 5 mango')
-        self.send('plant 5 banana')
-        self.send('plant 5 tomato')
-        self.send('plant 5 carrot')
-        self.send('plant 5 kiwi')
-        self.send('plant 5 durian')
+        self.send('plant potato 5')
+        self.send('plant mango 5')
+        self.send('plant banana 5')
+        self.send('plant tomato 5')
+        self.send('plant carrot 5')
+        self.send('plant kiwi 5')
+        self.send('plant durian 5')
 
         res = self.send('look plant sumatra')
         self.assertTrue('Total tanam di Sumatra:'
@@ -79,7 +79,7 @@ class SmsAPITest(unittest.TestCase):
                         '\nDurian 5 biji' in res.data)
 
     def test_single_plant(self):
-        self.send('plant 5 potato')
+        self.send('plant potato 5')
 
         res = self.send('look plant sumatra')
         self.assertTrue('Total tanam di Sumatra:'
