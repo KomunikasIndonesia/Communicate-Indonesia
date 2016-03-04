@@ -13,6 +13,11 @@ class Farm(ndb.Model):
     action = ndb.StringProperty(required=True, choices=set(ACTION))
     crop_name = ndb.StringProperty(required=True)
     quantity = ndb.IntegerProperty(required=True)
+    unit_type = ndb.StringProperty(required=True, choices=[
+        'weight',  # stored in grams
+        'volume',  # stored in litres
+        'count'  # stored as just plain quantity
+    ])
     ts_created = ndb.DateTimeProperty(auto_now_add=True)
     ts_updated = ndb.DateTimeProperty(auto_now=True)
 
@@ -23,6 +28,7 @@ class Farm(ndb.Model):
             'action': self.action,
             'crop_name': self.crop_name,
             'quantity': self.quantity,
+            'unit_type': self.unit_type,
             'ts_created': int(time.mktime(self.ts_created.timetuple()) * 1000),
             'ts_updated': int(time.mktime(self.ts_updated.timetuple()) * 1000),
         }
