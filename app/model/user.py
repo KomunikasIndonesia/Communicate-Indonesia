@@ -1,6 +1,7 @@
 import time
 from app.model.permission import (
     RECORD_HARVEST, RECORD_PLANT, RECORD_SELL,
+    REGISTER_PLANT,
     RETRIEVE_ALL_DISTRICT,
     BROADCAST_OWN_DISTRICT, BROADCAST_ALL
 )
@@ -56,6 +57,7 @@ class User(ndb.Model):
         if self.role == self.ROLE_DISTRICT_LEADER:
             return [RECORD_PLANT, RECORD_HARVEST, RECORD_SELL,
                     RETRIEVE_ALL_DISTRICT,
+                    REGISTER_PLANT,
                     BROADCAST_OWN_DISTRICT]
 
         if self.role == self.ROLE_HUTAN_BIRU:

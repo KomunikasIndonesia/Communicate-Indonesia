@@ -33,7 +33,7 @@ class ThreeArgCommand(Command):
         :return:
         """
         super(ThreeArgCommand, self).__init__(sms)
-        words = sms.body.split(' ')
+        words = sms.body.strip().split(' ')
         self.sms = sms
         self.cmd = None
         self.args = [None, None]

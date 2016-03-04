@@ -6,6 +6,7 @@ Convention: VARIABLE_NAME = 'variable_name'
 
 # store permissions
 RECORD_PLANT = 'record_plant'
+REGISTER_PLANT = 'register_plant'
 RECORD_HARVEST = 'record_harvest'
 RECORD_SELL = 'record_sell'
 

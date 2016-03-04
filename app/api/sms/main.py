@@ -74,6 +74,7 @@ def incoming_twilio_sms():
                              'PLANT [qty] [type]\n'
                              'HARVEST [qty] [type]\n'
                              'SELL [qty] [type]\n'
+                             'REGISTER [plant] [weight|volume|count]\n'
                              'BROADCAST [msg]')
 
     if response_message:

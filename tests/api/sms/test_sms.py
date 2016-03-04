@@ -143,6 +143,7 @@ class SmsTest(unittest.TestCase):
                               'PLANT [qty] [type]\n'
                               'HARVEST [qty] [type]\n'
                               'SELL [qty] [type]\n'
+                              'REGISTER [plant] [weight|volume|count]\n'
                               'BROADCAST [msg]')),
                          res.data)
 
@@ -167,6 +168,7 @@ class SmsTest(unittest.TestCase):
                               'PLANT [qty] [type]\n'
                               'HARVEST [qty] [type]\n'
                               'SELL [qty] [type]\n'
+                              'REGISTER [plant] [weight|volume|count]\n'
                               'BROADCAST [msg]')),
                          res.data)
 

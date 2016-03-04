@@ -15,6 +15,7 @@ class i18n(object):
             'harvest':          'panen',
             'plant':            'tanam',
             'sell':             'jual',
+            'register':         'mendaftar',
             'harvest {} {}':    'panen {} {}',
             'plant {} {}':      'tanam {} {}',
             'sell {} {}':       'jual {} {}',
@@ -26,6 +27,8 @@ class i18n(object):
             'all':              'semua',
             'everyone':         'semua',
             # Command output
+            'Plant already registered':     'Tanaman sudah terdaftar',
+            'Register command succeded':    'Daftar perintah berhasil',
             'Plant command succeeded':      'Perintah tanam berhasil',
             'Not enough {} planted':        'Tanam belum mencukupi',
             'Harvest command succeeded':    'Perintah panen berhasil',
@@ -37,10 +40,12 @@ class i18n(object):
             'PLANT [qty] [type]\n'
             'HARVEST [qty] [type]\n'
             'SELL [qty] [type]\n'
+            'REGISTER [plant] [weight|volume|count]\n'
             'BROADCAST [msg]':              'Perintah tidak dikenal, ketik cara berikut:\n'
                                             'TANAM [jumlah] [jenis]\n'
                                             'PANEN [jumlah] [jenis]\n'
-                                            'JUAL [jumlah] [jenis]',
+                                            'JUAL [jumlah] [jenis]\n'
+                                            'Mendaftar [tanaman] [berat|volume|biji]',
 
             'Message delivered':            'Pesan berhasil dikirim',
             'Message delivery failed':      'Pesan gagal dikirim',
@@ -90,7 +95,9 @@ class i18n(object):
             'December':         'Desember',
 
             # Units
-            'farm item':        'biji'
+            'weight':           'berat',
+            'volume':           'volume',
+            'farm item':        'biji',
         }
 
         return dic[domain] if domain in dic else {}
