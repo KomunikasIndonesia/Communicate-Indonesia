@@ -55,22 +55,31 @@ class PlantCommand(OneArgCommand):
         <command> <plant> <value>
 
     eg.
-        plant 20 potato
-        plant potato 20
+        plant 20 kg potato
+        plant potato 20 kg
     """
     VALID_CMDS = [
         'plant',  # en
         'tanam',  # in
     ]
+    VALID_UNITS = ['kg', 'g', 'l', 'ml']
 
     def __init__(self, sms):
         super(PlantCommand, self).__init__(sms)
         self.plant = None
         self.amount = None
+        self.unit = None
 
         words = self.message.split()
 
-        for word in words:
+        for i, word in enumerate(words):
+            if word.isdigit() and i+1 < len(words) and words[i+1] in self.VALID_UNITS:
+                self.unit = words[i+1]
+                words.remove(words[i+1])
+
+            if not words[i-1].isdigit() and word in self.VALID_UNITS:
+                break
+
             if word.isdigit():
                 self.amount = int(word)
                 words.remove(word)
