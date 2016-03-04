@@ -87,7 +87,10 @@ class i18n(object):
             'September':        'September',
             'October':          'Oktober',
             'November':         'November',
-            'December':         'Desember'
+            'December':         'Desember',
+
+            # Units
+            'farm item':        'biji'
         }
 
         return dic[domain] if domain in dic else {}
