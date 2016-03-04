@@ -45,7 +45,7 @@ class QueryAction(Action):
         response = _('Total {} in {}:').format(_(filter), district.name)
         for crop in crops:
             response += '\n{} {}'.format(_(crop.crop_name).title(),
-                                         crop.quantity)
+                                         crop.quantity_and_unit)
         return response
 
 

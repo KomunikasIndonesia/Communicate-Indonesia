@@ -3,8 +3,51 @@ from .util import id
 from google.appengine.ext import ndb
 
 
+class UnitConverter(object):
+    UNITS = [
+        (1, '')
+    ]
+    _reverse_index = {unit: multiplier for multiplier, unit in UNITS}
+
+    @classmethod
+    def largest_unit(cls, quantity, unit):
+        original_multiplier = cls._reverse_index[unit]
+        quantity = quantity * original_multiplier
+
+        for multiplier, possible_unit in reversed(cls.UNITS):
+            if quantity / multiplier >= 1:
+                return possible_unit
+
+        # fallback to smallest unit
+        return cls.UNITS[0][1]
+
+    @classmethod
+    def convert_to_unit(cls, quantity, original_unit, to_unit):
+        original_multiplier = cls._reverse_index[original_unit]
+        to_multiplier = cls._reverse_index[to_unit]
+        return quantity * original_multiplier / to_multiplier
+
+
+class WeightConverter(UnitConverter):
+    UNITS = [
+        (1, 'g'),
+        (1000, 'kg')
+    ]
+    _reverse_index = {unit: multiplier for multiplier, unit in UNITS}
+
+
+class VolumeConverter(UnitConverter):
+    UNITS = [
+        (1, 'L'),
+        (1000, 'kL')
+    ]
+    _reverse_index = {unit: multiplier for multiplier, unit in UNITS}
+
+
 class Farm(ndb.Model):
     ACTION = ['harvest', 'plant', 'sell']
+    weight_unit = 'g'
+    volume_unit = 'L'
 
     # relationship
     district_id = ndb.StringProperty(required=True)
@@ -32,6 +75,23 @@ class Farm(ndb.Model):
             'ts_created': int(time.mktime(self.ts_created.timetuple()) * 1000),
             'ts_updated': int(time.mktime(self.ts_updated.timetuple()) * 1000),
         }
+
+    @property
+    def quantity_and_unit(self):
+        converter = UnitConverter
+        unit = ''
+
+        if self.unit_type == 'weight':
+            converter = WeightConverter
+            unit = self.weight_unit
+        if self.unit_type == 'volume':
+            converter = VolumeConverter
+            unit = self.volume_unit
+
+        largest_unit = converter.largest_unit(self.quantity, unit)
+        quantity = converter.convert_to_unit(self.quantity, unit, largest_unit)
+
+        return '{} {}'.format(quantity, largest_unit).strip()
 
     @staticmethod
     def id():

@@ -25,6 +25,30 @@ class QueryActionTest(unittest.TestCase):
         Farm(action='sell', district_id='d1', crop_name='carrot', quantity=2,
              unit_type='count').put()
 
+        District(id='d2', name='Weight', slug='weight').put()
+        Farm(action='plant', district_id='d2', crop_name='rice', quantity=10,
+             unit_type='weight').put()
+        Farm(action='sell', district_id='d2', crop_name='salt', quantity=10,
+             unit_type='weight').put()
+        Farm(action='sell', district_id='d2', crop_name='rice', quantity=1000,
+             unit_type='weight').put()
+
+        District(id='d3', name='Volume', slug='volume').put()
+        Farm(action='plant', district_id='d3', crop_name='water', quantity=10,
+             unit_type='volume').put()
+        Farm(action='sell', district_id='d3', crop_name='water', quantity=1000,
+             unit_type='volume').put()
+        Farm(action='sell', district_id='d3', crop_name='oil', quantity=1,
+             unit_type='volume').put()
+
+        District(id='d4', name='All Unit Types', slug='all unit types').put()
+        Farm(action='plant', district_id='d4', crop_name='water', quantity=10,
+             unit_type='volume').put()
+        Farm(action='plant', district_id='d4', crop_name='rice', quantity=10,
+             unit_type='weight').put()
+        Farm(action='plant', district_id='d4', crop_name='potato', quantity=10,
+             unit_type='count').put()
+
         self.user = User(id='u1', role=User.ROLE_FARMER, district_id='d1')
 
     def _query(self, district, action):
@@ -69,3 +93,32 @@ class QueryActionTest(unittest.TestCase):
         self.assertEqual('Total jual di Sumatra:'
                          '\nWortel 2'
                          '\nKentang 1', msg)
+
+    def test_lookup_for_a_single_weight_plant(self):
+        msg = QueryAction(self._query('weight', 'plant')).execute()
+        self.assertEqual('Total tanam di Weight:'
+                         '\nPadi 10 g', msg)
+
+    def test_lookup_for_multiple_weight_plants(self):
+        msg = QueryAction(self._query('weight', 'sell')).execute()
+        self.assertEqual('Total jual di Weight:'
+                         '\nPadi 1 kg'
+                         '\nSalt 10 g', msg)
+
+    def test_lookup_for_single_volume_plant(self):
+        msg = QueryAction(self._query('volume', 'plant')).execute()
+        self.assertEqual('Total tanam di Volume:'
+                         '\nWater 10 L', msg)
+
+    def test_lookup_for_multiple_volume_plant(self):
+        msg = QueryAction(self._query('volume', 'sell')).execute()
+        self.assertEqual('Total jual di Volume:'
+                         '\nOil 1 L'
+                         '\nWater 1 kL', msg)
+
+    def test_lookup_for_all_unit_types(self):
+        msg = QueryAction(self._query('all unit types', 'plant')).execute()
+        self.assertEqual('Total tanam di All Unit Types:'
+                         '\nKentang 10'
+                         '\nPadi 10 g'
+                         '\nWater 10 L', msg)
