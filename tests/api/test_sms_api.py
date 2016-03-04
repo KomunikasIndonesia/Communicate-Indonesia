@@ -62,47 +62,47 @@ class SmsAPITest(unittest.TestCase):
 
         res = self.send('look plant sumatra')
         self.assertTrue('Total tanam di Sumatra:'
-                        '\nDurian 5'
-                        '\nKiwi 5'
-                        '\nWortel 5'
-                        '\nTomat 5'
-                        '\nPisang 5'
-                        '\nMangga 5'
-                        '\nKentang 5' in res.data)
+                        '\nDurian 5 biji'
+                        '\nKiwi 5 biji'
+                        '\nWortel 5 biji'
+                        '\nTomat 5 biji'
+                        '\nPisang 5 biji'
+                        '\nMangga 5 biji'
+                        '\nKentang 5 biji' in res.data)
 
         self.send('harvest 5 durian')
         self.send('harvest 5 kiwi')
 
         res = self.send('look sumatra')
         self.assertTrue('Total panen di Sumatra:'
-                        '\nKiwi 5'
-                        '\nDurian 5' in res.data)
+                        '\nKiwi 5 biji'
+                        '\nDurian 5 biji' in res.data)
 
     def test_single_plant(self):
         self.send('plant 5 potato')
 
         res = self.send('look plant sumatra')
         self.assertTrue('Total tanam di Sumatra:'
-                        '\nKentang 5' in res.data)
+                        '\nKentang 5 biji' in res.data)
 
         self.send('harvest 2 potato')
 
         res = self.send('look plant sumatra')
         self.assertTrue('Total tanam di Sumatra:'
-                        '\nKentang 3' in res.data)
+                        '\nKentang 3 biji' in res.data)
 
         self.send('harvest 1 potato')
 
         res = self.send('look harvest sumatra')
         self.assertTrue('Total panen di Sumatra:'
-                        '\nKentang 3' in res.data)
+                        '\nKentang 3 biji' in res.data)
 
         self.send('sell 1 potato')
 
         res = self.send('look sumatra')
         self.assertTrue('Total panen di Sumatra:'
-                        '\nKentang 2' in res.data)
+                        '\nKentang 2 biji' in res.data)
 
         res = self.send('look sumatra sell')
         self.assertTrue('Total jual di Sumatra:'
-                        '\nKentang 1' in res.data)
+                        '\nKentang 1 biji' in res.data)

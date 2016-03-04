@@ -1,11 +1,12 @@
 import time
 from .util import id
 from google.appengine.ext import ndb
+from app.i18n import _
 
 
 class UnitConverter(object):
     UNITS = [
-        (1, '')
+        (1, 'farm item')
     ]
     _reverse_index = {unit: multiplier for multiplier, unit in UNITS}
 
@@ -49,7 +50,7 @@ class Farm(ndb.Model):
     DEFAULT_UNITS = {
         'weight': ('g', WeightConverter),
         'volume': ('L', VolumeConverter),
-        'count': ('', UnitConverter)
+        'count': ('farm item', UnitConverter)
     }
 
     # relationship
@@ -82,7 +83,7 @@ class Farm(ndb.Model):
         largest_unit = converter.largest_unit(self.quantity, unit)
         quantity = converter.convert_to_unit(self.quantity, unit, largest_unit)
 
-        return '{} {}'.format(quantity, largest_unit).strip()
+        return '{} {}'.format(quantity, _(largest_unit)).strip()
 
     @staticmethod
     def id():

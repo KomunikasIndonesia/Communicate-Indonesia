@@ -64,13 +64,13 @@ class QueryActionTest(unittest.TestCase):
     def test_lookup_for_a_single_plant(self):
         msg = QueryAction(self._query("sumatra", 'plant')).execute()
         self.assertEqual('Total tanam di Sumatra:'
-                         '\nKentang 10', msg)
+                         '\nKentang 10 biji', msg)
 
     def test_lookup_for_multiple_plants(self):
         msg = QueryAction(self._query("sumatra", 'sell')).execute()
         self.assertEqual('Total jual di Sumatra:'
-                         '\nWortel 2'
-                         '\nKentang 1', msg)
+                         '\nWortel 2 biji'
+                         '\nKentang 1 biji', msg)
 
     def test_lookup_when_data_does_not_exist(self):
         res_msg = QueryAction(self._query('sumatra', 'harvest')).execute()
@@ -91,8 +91,8 @@ class QueryActionTest(unittest.TestCase):
     def test_should_ignore_district_name_case(self):
         msg = QueryAction(self._query('SuMatRa', 'sell')).execute()
         self.assertEqual('Total jual di Sumatra:'
-                         '\nWortel 2'
-                         '\nKentang 1', msg)
+                         '\nWortel 2 biji'
+                         '\nKentang 1 biji', msg)
 
     def test_lookup_for_a_single_weight_plant(self):
         msg = QueryAction(self._query('weight', 'plant')).execute()
@@ -119,6 +119,6 @@ class QueryActionTest(unittest.TestCase):
     def test_lookup_for_all_unit_types(self):
         msg = QueryAction(self._query('all unit types', 'plant')).execute()
         self.assertEqual('Total tanam di All Unit Types:'
-                         '\nKentang 10'
+                         '\nKentang 10 biji'
                          '\nPadi 10 g'
                          '\nWater 10 L', msg)
